@@ -14,7 +14,10 @@ c.pack()
 
 ########## variables
 
-lineCislo_karty = lineClientName = lineDatum_vytvorenia = timeShow = lineDatum_platnosti = lineDlzna_suma = lineBlokovana = incorrectNameOrPassword = ''
+users = {'kubo': 'ok', 'mato':'matojefrajer'} ##mena a hesla na prihlasovanie -- neskor by bolo dobre aby sme to dali do nejakej databazy v subore alebo co
+##users.update({'' : ''}) ## toto vzdy odkomentuj aby si nemusel stale pri spustani zadavat login
+
+lineCislo_karty = incorrectNameOrPassword = lineClientName = lineDatum_vytvorenia = timeShow = lineDatum_platnosti = lineDlzna_suma = lineBlokovana = incorrectNameOrPassword = ''
 
 visaMastercard = tk.IntVar() #the system binds the variables and let you know when variable is changed
 debetKredit = tk.IntVar()
@@ -45,6 +48,8 @@ def essentialLook():
     vertLine = c.create_line(w//2,h//borders * 3,w//2,h-borders,width = widthLines)
 
 def application():
+    global comboCards
+    
     c.delete('all')
     essentialLook()
     
@@ -94,6 +99,7 @@ def application():
     
 
 def loginScreen():
+    global entryName, entryPassword
     essentialLook()
     
     
@@ -126,15 +132,18 @@ def timeNow():
     c.after(1000,timeNow)
 
 def loginAuthentication():
-    global c
-    if True: ##treba zmenit na to, ze ak je spravne heslo a meno
+    global c, incorrectNameOrPassword
+    loginName = entryName.get()
+    loginPassword = entryPassword.get()
+    
+    if loginName in users and users[loginName] == loginPassword: ##treba zmenit na to, ze ak je spravne heslo a meno
         c.destroy()
         c = tk.Canvas(width = w, height = h, bg = backgroundColor, cursor = 'arrow')
         c.pack()
         application()
     else:
         c.delete(incorrectNameOrPassword)
-        incorrectNameOrPassword = c.create_text(x = w//4*3, y = 500, text = 'nesprávne meno alebo heslo!')
+        incorrectNameOrPassword = c.create_text(w//4*3-borders, 500, text = 'nesprávne meno alebo heslo!', fill = colorElement, font = fontMain + ' 13 italic')
     
 def displayCard(cislo_karty):
     global clientName, vydavatel, datum_platnosti, id_uctu, dlzna_suma, blokovana, datum_vytvorenia, lineCislo_karty, lineClientName, lineDatum_vytvorenia, lineDatum_platnosti, lineDlzna_suma, lineBlokovana
@@ -182,7 +191,7 @@ loginScreen()
 
 
 
-
+##s tym kartovym comboboxom je taka divna vec, ze ked prekliknes na ine, ono sa zobrazi az ked znova kliknes na ten combobox
 ##preco sa kurzor zmeni len prvykrat ked sa ukaze na combobox?
 #spravit ako definiciu so vstupnymi hodnotami ako id_uctu, cislo_uctu, .... vsetky info
 #spravit scrollbar ked bude mat viac kariet ako sa zmesti
