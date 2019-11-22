@@ -20,7 +20,7 @@ c.grid(sticky='s')
 ########## variables
 
 users = {'kubo': 'ok', 'mato':'matojefrajer'} ##mena a hesla na prihlasovanie -- neskor by bolo dobre aby sme to dali do nejakej databazy v subore alebo co
-users.update({'' : ''}) ## toto vzdy odkomentuj aby si nemusel stale pri spustani zadavat login
+##users.update({'' : ''}) ## toto vzdy odkomentuj aby si nemusel stale pri spustani zadavat login
 
 lineCislo_karty = incorrectNameOrPassword = lineClientName = lineDatum_vytvorenia = timeShow = lineDatum_platnosti = lineDlzna_suma = lineBlokovana = incorrectNameOrPassword = ''
 
@@ -145,7 +145,7 @@ def timeNow():
     c.delete(timeShow)
     now = datetime.datetime.now()
     now = now.strftime("%d. %m. %Y %H:%M:%S")
-    timeShow = c.create_text(borders*3, 37 + borders, anchor = 'w', text = 'Dobrý deň. Aktuálny dátum a čas našej banky: ' + str(now), fill=colorElement,font = fontMain + (fontSizeBig,) + (fontItalic,))
+    timeShow = c.create_text(borders*3, 37 + borders, anchor = 'w', text = f'Dobrý deň. Aktuálny dátum a čas našej banky: {now}', fill=colorElement,font = fontMain + (fontSizeBig,) + (fontItalic,))
     c.after(1000,timeNow)
 
 def loginAuthentication():
@@ -165,11 +165,11 @@ def loginAuthentication():
 def displayCard(cislo_karty):
     global clientName, vydavatel, datum_platnosti, id_uctu, dlzna_suma, blokovana, datum_vytvorenia, lineCislo_karty, lineClientName, lineDatum_vytvorenia, lineDatum_platnosti, lineDlzna_suma, lineBlokovana
     c.delete(lineCislo_karty, lineClientName, lineDatum_vytvorenia, lineDatum_platnosti, lineDlzna_suma, lineBlokovana)
-    lineClientName = c.create_text(borders + 20, h//borders*6,text='Meno klienta: ' + clientName, anchor = 'nw', fill=colorElement,font = fontMain + (fontSizeBig,) + (fontItalic,))
-    lineCislo_karty = c.create_text(borders + 20, h//borders*6 + 25, text='Cislo karty: ' + cislo_karty, anchor = 'nw', fill=colorElement,font = fontMain + (fontSizeBig,) + (fontItalic,))
-    lineDatum_vytvorenia = c.create_text(borders + 20, h//borders*6 + 25*2, text='Datum vytvorenia: ' + datum_vytvorenia, anchor = 'nw', fill=colorElement,font = fontMain + (fontSizeBig,) + (fontItalic,))
-    lineDatum_platnosti = c.create_text(borders + 20, h//borders*6 + 25*3, text='Datum platnosti: ' + datum_platnosti, anchor = 'nw', fill=colorElement,font = fontMain + (fontSizeBig,) + (fontItalic,))
-    lineDlzna_suma = c.create_text(borders + 20, h//borders*6 + 25*4, text='Dlzna suma: ' + dlzna_suma + '$', anchor = 'nw', fill=colorElement,font = fontMain + (fontSizeBig,) + (fontItalic,))
+    lineClientName = c.create_text(borders + 20, h//borders*6,text= f'Meno klienta: {clientName}', anchor = 'nw', fill=colorElement,font = fontMain + (fontSizeBig,) + (fontItalic,))
+    lineCislo_karty = c.create_text(borders + 20, h//borders*6 + 25, text= f'Cislo karty: {cislo_karty}', anchor = 'nw', fill=colorElement,font = fontMain + (fontSizeBig,) + (fontItalic,))
+    lineDatum_vytvorenia = c.create_text(borders + 20, h//borders*6 + 25*2, text= f'Datum vytvorenia: {datum_vytvorenia}', anchor = 'nw', fill=colorElement,font = fontMain + (fontSizeBig,) + (fontItalic,))
+    lineDatum_platnosti = c.create_text(borders + 20, h//borders*6 + 25*3, text= f'Datum platnosti: {datum_platnosti}', anchor = 'nw', fill=colorElement,font = fontMain + (fontSizeBig,) + (fontItalic,))
+    lineDlzna_suma = c.create_text(borders + 20, h//borders*6 + 25*4, text= f'Dlzna suma: {dlzna_suma}$', anchor = 'nw', fill=colorElement,font = fontMain + (fontSizeBig,) + (fontItalic,))
     if blokovana == '0':
         lineBlokovana = c.create_text(borders + 20, h//borders*6 + 25*5, text='Stav: aktívna', anchor = 'nw', fill=colorElement,font = fontMain + (fontSizeBig,) + (fontItalic,))
     elif blokovana == '1':
