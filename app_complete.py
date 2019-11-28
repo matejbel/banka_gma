@@ -1,3 +1,17 @@
+'''
+GALINSKI:
+zladit dizajn s ostatnymi
+DONE radiobutton - nech je jasne, ked je kliknute
+miesto rollboxu na klienta spravit search engine
+vydavatel, typ karty, limit (rodelit pravu stranu, teda ze sa nevybera zo 4 moznosti, ale dvoch a dvoch)
+DONE farba pisma nech je v entry citatelna
+DONE tlacidlo na odhlasenie sa
+dat lavej strane vzduch, oddialit info
+rollbox vyber karty dat hore
+miesto 2 tlacidiel odblokovat a zablokovat spravit jedno, ktore bude menit stav
+
++ Mato, bolo by podla mna super, ked budes mat cas, ze by si vsetky pozicie co tu su zmazal a spravil ich nanovo a vsetky zavisle, teda relativne podla w a h - nie ako teraz, ze niektore maju suradnice 100 a ked zmenime v skole velkost frameu, tak sa to cele rozbije
+'''
 import tkinter as tk
 from tkinter import ttk
 import datetime
@@ -12,7 +26,7 @@ fontSizeSmall = '14'
 fontItalic = 'italic'
 fontBold = 'bold'
 fontStyleNone = ''
-colorElement = '#5c5b5e'
+colorElement = 'black'
 backgroundColor = '#acf9b8'
 c = tk.Canvas(width = w, height = h, bg = backgroundColor, cursor = 'arrow')
 c.grid(sticky='s')
@@ -20,7 +34,7 @@ c.grid(sticky='s')
 ########## variables
 
 users = {'kubo': 'ok', 'mato':'matojefrajer'} ##mena a hesla na prihlasovanie -- neskor by bolo dobre aby sme to dali do nejakej databazy v subore alebo co
-##users.update({'' : ''}) ## toto vzdy odkomentuj aby si nemusel stale pri spustani zadavat login
+users.update({'' : ''}) ## toto vzdy odkomentuj aby si nemusel stale pri spustani zadavat login
 
 lineCislo_karty = incorrectNameOrPassword = lineClientName = lineDatum_vytvorenia = timeShow = lineDatum_platnosti = lineDlzna_suma = lineBlokovana = incorrectNameOrPassword = ''
 
@@ -70,41 +84,47 @@ def application():
     comboUcet.pack()
     comboUcet.place(x=645,y=40,anchor='nw')
 
-    radioButtonVisa = tk.Radiobutton(activebackground='silver',bg = backgroundColor, cursor='hand2',image = imageVisa,variable = visaMastercard,value = 1)
+    radioButtonVisa = tk.Radiobutton(indicatoron='false',selectcolor=colorElement,highlightthickness=20,activebackground=colorElement,bg = backgroundColor, cursor='hand2',image = imageVisa,variable = visaMastercard,value = 1)
     radioButtonVisa.pack()
     radioButtonVisa.place(x=w//4*3-150,y=250,anchor = 'c')
 
-    radioButtonMastercard = tk.Radiobutton(activebackground='silver',bg = backgroundColor, cursor='hand2',image = imageMastercard,variable = visaMastercard,value =2)
+    radioButtonMastercard = tk.Radiobutton(indicatoron='false',selectcolor=colorElement,highlightthickness=20,activebackground=colorElement,bg = backgroundColor, cursor='hand2',image = imageMastercard,variable = visaMastercard,value =2)
     radioButtonMastercard.pack()
     radioButtonMastercard.place(x = w//4*3+150,y = 250, anchor = 'c')
 
-    radioButtonDebet = tk.Radiobutton(activebackground='silver',bg = backgroundColor, cursor='hand2',image = imageDebet,variable = debetKredit,value = 1)
+    radioButtonDebet = tk.Radiobutton(indicatoron='false',selectcolor=colorElement,highlightthickness=20,activebackground=colorElement,bg = backgroundColor, cursor='hand2',image = imageDebet,variable = debetKredit,value = 1)
     radioButtonDebet.pack()
     radioButtonDebet.place(x=w//4*3-150,y=400,anchor = 'c')
 
-    radioButtonKredit = tk.Radiobutton(activebackground='silver',bg = backgroundColor, cursor='hand2',image = imageKredit,variable = debetKredit,value = 2)
+    radioButtonKredit = tk.Radiobutton(indicatoron='false',selectcolor=colorElement,highlightthickness=20,activebackground=colorElement,bg = backgroundColor, cursor='hand2',image = imageKredit,variable = debetKredit,value = 2)
     radioButtonKredit.pack()
     radioButtonKredit.place(x=w//4*3+150,y=400,anchor = 'c')
 
-    limitEntry = tk.Entry(font = fontMain + (fontSizeMedium,) + (fontStyleNone,), foreground = backgroundColor,insertbackground=backgroundColor)
+    limitEntry = tk.Entry(font = fontMain + (fontSizeMedium,) + (fontStyleNone,), foreground = colorElement,insertbackground=colorElement)
     limitEntry.pack()
     limitEntry.place(x = w//4*3, y = 570,anchor='c')
 
-    createCardButton = tk.Button(width = 15, bg=colorElement,activebackground = 'silver',foreground = backgroundColor,text = 'vytvoriť kartu',cursor='hand2',font = fontMain + (fontSizeBig,) + (fontBold,))
+    createCardButton = tk.Button(width = 15, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'vytvoriť kartu',cursor='hand2',font = fontMain + (fontSizeBig,) + (fontBold,))
     createCardButton.pack()
     createCardButton.place(x = w//4*3+150, y = 650,anchor='c')
 
-    blockCardButton = tk.Button(width = 15, bg=colorElement,activebackground = 'silver',foreground = backgroundColor,text = 'blokovať kartu',cursor='hand2',font = fontMain + (fontSizeSmall,) + (fontItalic,))
+    blockCardButton = tk.Button(width = 15, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'blokovať kartu',cursor='hand2',font = fontMain + (fontSizeSmall,) + (fontItalic,))
     blockCardButton.pack()
     blockCardButton.place(x = w//2-borders, y = h//borders*6,anchor='ne')
 
-    unblockCardButton = tk.Button(width = 15, bg=colorElement,activebackground = 'silver',foreground = backgroundColor,text = 'odblokovať kartu',cursor='hand2',font = fontMain + (fontSizeSmall,) + (fontItalic,))
+    unblockCardButton = tk.Button(width = 15, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'odblokovať kartu',cursor='hand2',font = fontMain + (fontSizeSmall,) + (fontItalic,))
     unblockCardButton.pack()
     unblockCardButton.place(x = w//2-borders, y = h//borders*6+50,anchor='ne')
 
-    deleteCardButton = tk.Button(width = 15, bg=colorElement,activebackground = 'silver',foreground = backgroundColor,text = 'vymazať kartu',cursor='hand2',font = fontMain + (fontSizeSmall,) + (fontItalic,))
+    deleteCardButton = tk.Button(width = 15, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'vymazať kartu',cursor='hand2',font = fontMain + (fontSizeSmall,) + (fontItalic,))
     deleteCardButton.pack()
     deleteCardButton.place(x = w//2-borders, y = h//borders*6+50*2,anchor='ne')
+
+    logoutButton = tk.Button(command = logout, width = 10, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'odhlásenie',cursor='hand2',font = fontMain + (fontSizeBig,) + (fontItalic,))
+    logoutButton.pack()
+    logoutButton.place(x = w - 100, y = 100,anchor='nw')
+
+
 
     displayCard(cardsList[0])
 
@@ -123,12 +143,12 @@ def loginScreen():
     timeNow()
     
     c.create_text(w//4*3-borders*12,h//2-70,anchor = 'nw',text = 'MENO', fill=colorElement, font = fontMain + (fontSizeBig,) + (fontItalic,))
-    entryName = tk.Entry(master = c, font = fontMain + (fontSizeBig,) + (fontStyleNone,), foreground = backgroundColor,insertbackground=backgroundColor)
+    entryName = tk.Entry(master = c, font = fontMain + (fontSizeBig,) + (fontStyleNone,), foreground = colorElement,insertbackground=colorElement)
     entryName.pack()
     entryName.place(x = w//4*3-borders*5, y = h//2-25+borders,anchor='c')
 
     c.create_text(w//4*3-borders*12,h//2+30,anchor = 'nw', text = 'HESLO', fill = colorElement,font = fontMain + (fontSizeBig,) + (fontItalic,))
-    entryPassword = tk.Entry(master = c, font = fontMain + (fontSizeBig,) + (fontStyleNone,), foreground = backgroundColor,insertbackground=backgroundColor, show = '*')
+    entryPassword = tk.Entry(master = c, font = fontMain + (fontSizeBig,) + (fontStyleNone,), foreground = colorElement,insertbackground=colorElement, show = '*')
     entryPassword.pack()
     entryPassword.place(x = w//4*3-borders * 5, y = h//2+75+borders,anchor='c')
 
@@ -136,7 +156,7 @@ def loginScreen():
     logoBanky.pack()
     logoBanky.place(x = w//4, y  = h//2+borders, anchor='c')
 
-    buttonLogin = tk.Button(master = c, command = loginAuthentication, width = 10, bg=colorElement,activebackground = 'silver',foreground = backgroundColor,text = 'prihlásenie',cursor='hand2',font = fontMain + (fontSizeBig,) + (fontItalic,))
+    buttonLogin = tk.Button(master = c, command = loginAuthentication, width = 10, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'prihlásenie',cursor='hand2',font = fontMain + (fontSizeBig,) + (fontItalic,))
     buttonLogin.pack()
     buttonLogin.place(x = w-borders*7,y = h//2+borders*2, anchor = 'c')
 
@@ -161,7 +181,14 @@ def loginAuthentication():
     else:
         c.delete(incorrectNameOrPassword)
         incorrectNameOrPassword = c.create_text(w//4*3-borders, 500, text = 'nesprávne meno alebo heslo!', fill = colorElement, font = fontMain + (fontSizeBig,) + (fontItalic,))
-    
+
+def logout():
+    global c
+    c.destroy()
+    c = tk.Canvas(width = w, height = h, bg = backgroundColor, cursor = 'arrow')
+    c.pack()
+    loginScreen()
+ 
 def displayCard(cislo_karty):
     global clientName, vydavatel, datum_platnosti, id_uctu, dlzna_suma, blokovana, datum_vytvorenia, lineCislo_karty, lineClientName, lineDatum_vytvorenia, lineDatum_platnosti, lineDlzna_suma, lineBlokovana
     c.delete(lineCislo_karty, lineClientName, lineDatum_vytvorenia, lineDatum_platnosti, lineDlzna_suma, lineBlokovana)
@@ -203,7 +230,7 @@ loginScreen()
 
 
 ##for card in range(cardsList):
-##    rect = c.create_rectangle(borders*2, cardsY, w//2-borders, cardsY + cardsHeight, fill = 'silver', activefill='gray', tags='rectClick')
+##    rect = c.create_rectangle(borders*2, cardsY, w//2-borders, cardsY + cardsHeight, fill = colorElement, activefill='gray', tags='rectClick')
 ##    cardsY += cardsHeight + borders
 ##
 ##c.tag_bind('rectClick','<Button-1>', cardsClick)
@@ -214,7 +241,6 @@ loginScreen()
 ##if vlozene.isdigit()... else print vlozte cislo
 ## zistit ako sa meni height Comboboxu -- width sa meni podla velkosti pisma
 ##radiobutton option --- command = A procedure to be called every time the user changes the state of this radiobutton.
-##v entry parameter show = * -- sa da pouzit na heslo
 ##visaLogo = tk.Label(image = imageVisa, borderwidth = 0) ## iny sposob vkladania obrazkov
 ##visaLogo.pack()
 ##combobox--- postcommand: [funkcia ktoru treba vykonat pri kliknuti]
