@@ -1,6 +1,6 @@
 '''
 GALINSKI:
-zladit dizajn s ostatnymi
+DONEzladit dizajn s ostatnymi
 DONE radiobutton - nech je jasne, ked je kliknute
 miesto rollboxu na klienta spravit search engine
 DONEvydavatel, typ karty, limit (rodelit pravu stranu, teda ze sa nevybera zo 4 moznosti, ale dvoch a dvoch)
@@ -19,15 +19,16 @@ w = 1280
 h = 720
 borders = 20
 widthLines = 15
-fontMain = ('Source Sans Pro Semibold',)
-fontSizeBig = '22'
-fontSizeMedium = '18'
-fontSizeSmall = '14'
+fontWidget = ('Helvetica',)
+fontMain = ('Arial',)
+fontSizeBig = '30'
+fontSizeMedium = '20'
+fontSizeSmall = '16'
 fontItalic = 'italic'
 fontBold = 'bold'
 fontStyleNone = ''
 colorElement = 'black'
-backgroundColor = '#acf9b8'
+backgroundColor = '#71CAE7'
 c = tk.Canvas(width = w, height = h, bg = backgroundColor, cursor = 'arrow')
 c.grid(sticky='s')
 
@@ -82,7 +83,7 @@ def application():
     headline8 = c.create_text(w//4*3-200, 400, text = 'typ', font = fontMain + (fontSizeMedium,) + (fontStyleNone,),fill=colorElement,anchor='c')
 
 
-    comboUcet = ttk.Combobox(font = fontMain + (fontSizeMedium,) + (fontStyleNone,), values = clients, width = 40, state='readonly', justify = 'center')
+    comboUcet = ttk.Combobox(font = fontWidget + (fontSizeSmall,) + (fontStyleNone,), values = clients, width = 30, state='readonly', justify = 'center')
     comboUcet.current(0) ##ktore sa ukaze na zaciatku ako default
     comboUcet.pack()
     comboUcet.place(x=645,y=40,anchor='nw')
@@ -103,27 +104,27 @@ def application():
     radioButtonKredit.pack()
     radioButtonKredit.place(x=w//4*3+150,y=400,anchor = 'c')
 
-    limitEntry = tk.Entry(font = fontMain + (fontSizeMedium,) + (fontStyleNone,), foreground = colorElement,insertbackground=colorElement)
+    limitEntry = tk.Entry(font = fontWidget + (fontSizeMedium,) + (fontStyleNone,), foreground = colorElement,insertbackground=colorElement)
     limitEntry.pack()
     limitEntry.place(x = w//4*3, y = 570,anchor='c')
 
-    createCardButton = tk.Button(width = 15, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'vytvoriť kartu',cursor='hand2',font = fontMain + (fontSizeBig,) + (fontBold,))
+    createCardButton = tk.Button(width = 15, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'vytvoriť kartu',cursor='hand2',font = fontWidget + (fontSizeBig,) + (fontBold,))
     createCardButton.pack()
     createCardButton.place(x = w//4*3+150, y = 650,anchor='c')
 
-    blockCardButton = tk.Button(width = 15, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'blokovať kartu',cursor='hand2',font = fontMain + (fontSizeSmall,) + (fontItalic,))
+    blockCardButton = tk.Button(width = 15, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'blokovať kartu',cursor='hand2',font = fontWidget + (fontSizeSmall,) + (fontItalic,))
     blockCardButton.pack()
     blockCardButton.place(x = w//2-borders, y = h//borders*6,anchor='ne')
 
-    unblockCardButton = tk.Button(width = 15, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'odblokovať kartu',cursor='hand2',font = fontMain + (fontSizeSmall,) + (fontItalic,))
+    unblockCardButton = tk.Button(width = 15, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'odblokovať kartu',cursor='hand2',font = fontWidget + (fontSizeSmall,) + (fontItalic,))
     unblockCardButton.pack()
     unblockCardButton.place(x = w//2-borders, y = h//borders*6+50,anchor='ne')
 
-    deleteCardButton = tk.Button(command = deleteCard,width = 15, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'vymazať kartu',cursor='hand2',font = fontMain + (fontSizeSmall,) + (fontItalic,))
+    deleteCardButton = tk.Button(command = deleteCard,width = 15, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'vymazať kartu',cursor='hand2',font = fontWidget + (fontSizeSmall,) + (fontItalic,))
     deleteCardButton.pack()
     deleteCardButton.place(x = w//2-borders, y = h//borders*6+50*2,anchor='ne')
 
-    logoutButton = tk.Button(command = logout, width = 10, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'odhlásenie',cursor='hand2',font = fontMain + (fontSizeBig,) + (fontItalic,))
+    logoutButton = tk.Button(command = logout, width = 10, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'odhlásenie',cursor='hand2',font = fontWidget + (fontSizeBig,) + (fontItalic,))
     logoutButton.pack()
     logoutButton.place(x = w - 100, y = 100,anchor='nw')
 
@@ -132,7 +133,7 @@ def application():
     displayCard(cardsList[0])
 
     ## comboBox pre ucty klienta
-    comboCards = ttk.Combobox(font = fontMain + (fontSizeBig,) + (fontStyleNone,), values = cardsList, width = 35, state='readonly', justify = 'center')
+    comboCards = ttk.Combobox(font = fontWidget + (fontSizeBig,) + (fontStyleNone,), values = cardsList, width = 35, state='readonly', justify = 'center')
     comboCards.current(0)
     comboCards.pack()
     comboCards.place(x = w//4, y = h//5, anchor='c')
@@ -147,12 +148,12 @@ def loginScreen():
     timeNow()
     
     c.create_text(w//4*3-borders*12,h//2-70,anchor = 'nw',text = 'MENO', fill=colorElement, font = fontMain + (fontSizeBig,) + (fontItalic,))
-    entryName = tk.Entry(master = c, font = fontMain + (fontSizeBig,) + (fontStyleNone,), foreground = colorElement,insertbackground=colorElement)
+    entryName = tk.Entry(master = c, font = fontWidget + (fontSizeBig,) + (fontStyleNone,), foreground = colorElement,insertbackground=colorElement)
     entryName.pack()
     entryName.place(x = w//4*3-borders*5, y = h//2-25+borders,anchor='c')
 
     c.create_text(w//4*3-borders*12,h//2+30,anchor = 'nw', text = 'HESLO', fill = colorElement,font = fontMain + (fontSizeBig,) + (fontItalic,))
-    entryPassword = tk.Entry(master = c, font = fontMain + (fontSizeBig,) + (fontStyleNone,), foreground = colorElement,insertbackground=colorElement, show = '*')
+    entryPassword = tk.Entry(master = c, font = fontWidget + (fontSizeBig,) + (fontStyleNone,), foreground = colorElement,insertbackground=colorElement, show = '*')
     entryPassword.pack()
     entryPassword.place(x = w//4*3-borders * 5, y = h//2+75+borders,anchor='c')
 
@@ -160,7 +161,7 @@ def loginScreen():
     logoBanky.pack()
     logoBanky.place(x = w//4, y  = h//2+borders, anchor='c')
 
-    buttonLogin = tk.Button(master = c, command = loginAuthentication, width = 10, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'prihlásenie',cursor='hand2',font = fontMain + (fontSizeBig,) + (fontItalic,))
+    buttonLogin = tk.Button(master = c, command = loginAuthentication, width = 10, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'prihlásenie',cursor='hand2',font = fontWidget + (fontSizeBig,) + (fontItalic,))
     buttonLogin.pack()
     buttonLogin.place(x = w-borders*7,y = h//2+borders*2, anchor = 'c')
 
