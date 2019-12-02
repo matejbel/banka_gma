@@ -12,7 +12,32 @@ miesto 2 tlacidiel odblokovat a zablokovat spravit jedno, ktore bude menit stav
 
 + Mato, bolo by podla mna super, ked budes mat cas, ze by si vsetky pozicie co tu su zmazal a spravil ich nanovo a vsetky zavisle, teda relativne podla w a h - nie ako teraz, ze niektore maju suradnice 100 a ked zmenime v skole velkost frameu, tak sa to cele rozbije
 '''
-import tkinter as tk
+
+##########zide sa na neskor
+
+#spravit ako definiciu so vstupnymi hodnotami ako id_uctu, cislo_uctu, .... vsetky info
+
+#spravit scrollbar ked bude mat viac kariet ako sa zmesti
+
+##totok sa pouzije na to, aby sme checkovali, ci akurat niekto zapisuje do suboru
+##for path, directories, files in os.walk('banka_gma'):
+##     if 'app_complete.py' in files:
+##          print ('found %s' % os.path.join(path, 'debet.png'))
+
+##vlozene = limitEntry.get() #takto zaistime aby vzdy vlozena hodnota bola len cislo
+##if vlozene.isdigit()... else print vlozte cislo
+
+##radiobutton option --- command = A procedure to be called every time the user changes the state of this radiobutton.
+
+##print(dict(comboUcet))
+
+##for card in range(cardsList):
+##    rect = c.create_rectangle(borders*2, cardsY, w//2-borders, cardsY + cardsHeight, fill = colorElement, activefill='gray', tags='rectClick')
+##    cardsY += cardsHeight + borders
+##
+##c.tag_bind('rectClick','<Button-1>', cardsClick)
+
+import tkinter as tk, os.path
 from tkinter import ttk, messagebox
 import datetime
 w = 1280
@@ -35,7 +60,7 @@ c.grid(sticky='s')
 ########## variables
 
 users = {'kubo': 'ok', 'mato':'matojefrajer'} ##mena a hesla na prihlasovanie -- neskor by bolo dobre aby sme to dali do nejakej databazy v subore alebo co
-users.update({'' : ''}) ## toto vzdy odkomentuj aby si nemusel stale pri spustani zadavat login
+##users.update({'' : ''}) ## toto vzdy odkomentuj aby si nemusel stale pri spustani zadavat login
 
 lineCislo_karty = incorrectNameOrPassword = lineClientName = lineDatum_vytvorenia = timeShow = lineDatum_platnosti = lineDlzna_suma = lineBlokovana = incorrectNameOrPassword = ''
 
@@ -225,10 +250,6 @@ def deleteCard():
 
 
 
-
-
-
-
 loginScreen()
 
 
@@ -237,25 +258,4 @@ loginScreen()
 
 
 
-##s tym kartovym comboboxom je taka divna vec, ze ked prekliknes na ine, ono sa zobrazi az ked znova kliknes na ten combobox === hotovo
-##preco sa kurzor zmeni len prvykrat ked sa ukaze na combobox?
-#spravit ako definiciu so vstupnymi hodnotami ako id_uctu, cislo_uctu, .... vsetky info
-#spravit scrollbar ked bude mat viac kariet ako sa zmesti
 
-
-##for card in range(cardsList):
-##    rect = c.create_rectangle(borders*2, cardsY, w//2-borders, cardsY + cardsHeight, fill = colorElement, activefill='gray', tags='rectClick')
-##    cardsY += cardsHeight + borders
-##
-##c.tag_bind('rectClick','<Button-1>', cardsClick)
-
-
-##########zide sa na neskor
-##vlozene = limitEntry.get() #takto zaistime aby vzdy vlozena hodnota bola len cislo
-##if vlozene.isdigit()... else print vlozte cislo
-## zistit ako sa meni height Comboboxu -- width sa meni podla velkosti pisma
-##radiobutton option --- command = A procedure to be called every time the user changes the state of this radiobutton.
-##visaLogo = tk.Label(image = imageVisa, borderwidth = 0) ## iny sposob vkladania obrazkov
-##visaLogo.pack()
-##combobox--- postcommand: [funkcia ktoru treba vykonat pri kliknuti]
-##print(dict(comboUcet))
