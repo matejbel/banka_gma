@@ -99,50 +99,50 @@ def application():
     c.delete('all')
     essentialLook()
     
-    headline1 = c.create_text(borders*5+70,45,text='Dobrý deň. Aktuálne pracujete s klientom:', anchor = 'nw', fill=colorElement,font = fontMain + (fontSizeMedium,) + (fontItalic,))
-    headline2 = c.create_text(w//4,200,text='karty klienta', anchor = 'center', fill=colorElement,font = fontMain + (fontSizeBig,) + (fontBold,))
-    headline3 = c.create_text(w//4*3,150,text='vytvorenie novej karty', anchor = 'center', fill=colorElement,font = fontMain + (fontSizeBig,) + (fontBold,))
-    headline4 = c.create_text(w//4*3-140,470,text='debetná karta',font = fontMain + (fontSizeSmall,) + (fontStyleNone,),fill=colorElement)
-    headline5 = c.create_text(w//4*3+160,470,text = 'kreditná karta',font = fontMain + (fontSizeSmall,) + (fontStyleNone,),fill=colorElement)
-    headline6 = c.create_text(w//4*3-200, 540, text = 'limit', font = fontMain + (fontSizeMedium,) + (fontStyleNone,),fill=colorElement,anchor='c')
-    headline7 = c.create_text(w//4*3-200, 300, text = 'vydavateľ', font = fontMain + (fontSizeMedium,) + (fontStyleNone,),fill=colorElement,anchor='c')
-    headline8 = c.create_text(w//4*3-200, 400, text = 'typ', font = fontMain + (fontSizeMedium,) + (fontStyleNone,),fill=colorElement,anchor='c')
+    headline1 = c.create_text(w//4, (borders*5+widthLines/2)/2,text='Dobrý deň. Vyberte účet:', anchor = 'c', fill=colorElement,font = fontMain + (fontSizeMedium,) + (fontItalic,))
+    headline2 = c.create_text(w//4,200,text='Karty klienta', anchor = 'center', fill=colorElement,font = fontMain + (fontSizeBig,) + (fontBold,))
+    headline3 = c.create_text(w//4*3, borders*7, text='Vytvorenie novej karty', anchor = 'center', fill=colorElement,font = fontMain + (fontSizeBig,) + (fontBold,))
+    headline4 = c.create_text(w//8*5 + widthLines, h//2 + borders*10, text='debetná karta', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'n')
+    headline5 = c.create_text(w//8*7 - widthLines, h//2 + borders*10, text = 'kreditná karta', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'n')
+    headline6 = c.create_text(w//2 + borders*2 - widthLines/2, h-borders*4, text = 'Limit', font = fontMain + (fontSizeMedium,) + (fontStyleNone,),fill=colorElement,anchor='sw')
+    headline7 = c.create_text(w//2 + borders*2 - widthLines/2, h//2 - borders*8, text = 'Vydavateľ', font = fontMain + (fontSizeMedium,) + (fontStyleNone,),fill=colorElement,anchor='sw')
+    headline8 = c.create_text(w//2 + borders*2 - widthLines/2, h//2 + borders, text = 'Typ', font = fontMain + (fontSizeMedium,) + (fontStyleNone,),fill=colorElement,anchor='w')
 
 
     comboUcet = ttk.Combobox(font = fontWidget + (fontSizeSmall,) + (fontStyleNone,), values = clients, width = 30, state='readonly', justify = 'center')
     comboUcet.current(0) ##ktore sa ukaze na zaciatku ako default
     comboUcet.pack()
-    comboUcet.place(x=645,y=40,anchor='nw')
+    comboUcet.place(x = w//2, y = (borders*5+widthLines/2)/2,anchor='w')
 
     radioButtonVisa = tk.Radiobutton(indicatoron='false',selectcolor=colorElement,highlightthickness=20,activebackground=colorElement,bg = backgroundColor, cursor='hand2',image = imageVisa,variable = visaMastercard,value = 1)
     radioButtonVisa.pack()
-    radioButtonVisa.place(x=w//4*3-150,y=250,anchor = 'c')
+    radioButtonVisa.place(x = w//8*5 + widthLines, y = h//2, anchor = 's')
 
     radioButtonMastercard = tk.Radiobutton(indicatoron='false',selectcolor=colorElement,highlightthickness=20,activebackground=colorElement,bg = backgroundColor, cursor='hand2',image = imageMastercard,variable = visaMastercard,value =2)
     radioButtonMastercard.pack()
-    radioButtonMastercard.place(x = w//4*3+150,y = 250, anchor = 'c')
+    radioButtonMastercard.place(x = w//8*7 - widthLines, y = h//2, anchor = 's')
 
     radioButtonDebet = tk.Radiobutton(indicatoron='false',selectcolor=colorElement,highlightthickness=20,activebackground=colorElement,bg = backgroundColor, cursor='hand2',image = imageDebet,variable = debetKredit,value = 1)
     radioButtonDebet.pack()
-    radioButtonDebet.place(x=w//4*3-150,y=400,anchor = 'c')
+    radioButtonDebet.place(x = w//8*5 + widthLines, y=h//2 + borders*2, anchor = 'n')
 
     radioButtonKredit = tk.Radiobutton(indicatoron='false',selectcolor=colorElement,highlightthickness=20,activebackground=colorElement,bg = backgroundColor, cursor='hand2',image = imageKredit,variable = debetKredit,value = 2)
     radioButtonKredit.pack()
-    radioButtonKredit.place(x=w//4*3+150,y=400,anchor = 'c')
+    radioButtonKredit.place(x = w//8*7 - widthLines, y=h//2 + borders*2, anchor = 'n')
 
     limitEntry = tk.Entry(font = fontWidget + (fontSizeMedium,) + (fontStyleNone,), foreground = colorElement,insertbackground=colorElement)
     limitEntry.pack()
-    limitEntry.place(x = w//4*3, y = 570,anchor='c')
+    limitEntry.place(x = w//2 + borders*2 - widthLines/2, y = h-borders*2, anchor='sw')
 
-    createCardButton = tk.Button(width = 15, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'vytvoriť kartu',cursor='hand2',font = fontWidget + (fontSizeBig,) + (fontBold,))
+    createCardButton = tk.Button(bg=colorElement, width = 12, activebackground = colorElement,foreground = backgroundColor,text = 'vytvoriť kartu',cursor='hand2',font = fontWidget + (fontSizeMedium,) + (fontBold,))
     createCardButton.pack()
-    createCardButton.place(x = w//4*3+150, y = 650,anchor='c')
+    createCardButton.place(x = w-borders*2, y = h-borders*2, anchor = 'se')
 
     blockCardButton = tk.Button(width = 15, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'blokovať kartu',cursor='hand2',font = fontWidget + (fontSizeSmall,) + (fontItalic,))
     blockCardButton.pack()
     blockCardButton.place(x = w//2-borders, y = h//borders*6,anchor='ne')
 
-    unblockCardButton = tk.Button(width = 15, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'odblokovať kartu',cursor='hand2',font = fontWidget + (fontSizeSmall,) + (fontItalic,))
+    unblockCardButton = tk.Button(width = 10, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'odblokovať kartu',cursor='hand2',font = fontWidget + (fontSizeSmall,) + (fontItalic,))
     unblockCardButton.pack()
     unblockCardButton.place(x = w//2-borders, y = h//borders*6+50,anchor='ne')
 
@@ -150,9 +150,9 @@ def application():
     deleteCardButton.pack()
     deleteCardButton.place(x = w//2-borders, y = h//borders*6+50*2,anchor='ne')
 
-    logoutButton = tk.Button(command = logout, width = 10, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'odhlásenie',cursor='hand2',font = fontWidget + (fontSizeBig,) + (fontItalic,))
+    logoutButton = tk.Button(command = logout, width = 10, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'odhlásiť',cursor='hand2',font = fontWidget + (fontSizeMedium,) + (fontBold,))
     logoutButton.pack()
-    logoutButton.place(x = w - 100, y = 100,anchor='nw')
+    logoutButton.place(x = w-borders*2, y = (borders*5+widthLines/2)/2, anchor='e')
 
 
 
@@ -172,21 +172,21 @@ def loginScreen():
     c.create_text(w - borders, borders*2 , anchor = 'se', text = 'verzia: 1.3.4', fill=colorElement,font = fontMain + (fontSizeSmall,) + (fontItalic,))
 
     timeNow()
-    c.create_text(w//2 + widthLines*3, h//10*4, anchor = 'w',text = 'MENO', fill=colorElement, font = fontMain + (fontSizeBig,) + (fontItalic,))
+    c.create_text(w//2 + borders*3 - widthLines/2, h//10*4, anchor = 'w',text = 'MENO', fill=colorElement, font = fontMain + (fontSizeBig,) + (fontItalic,))
     entryName = tk.Entry(master = c, font = fontWidget + (fontSizeBig,) + (fontStyleNone,), foreground = colorElement,insertbackground=colorElement)
     entryName.pack()
-    entryName.place(x = w//2 + widthLines*2, y = h//10*4 + int(fontSizeBig)/2*3, anchor='w')
+    entryName.place(x = w//2 + borders*2 - widthLines/2, y = h//10*4 + int(fontSizeBig)/2*3, anchor='w')
 
-    c.create_text(w//2 + widthLines*3, h//10*6, anchor = 'w', text = 'HESLO', fill = colorElement,font = fontMain + (fontSizeBig,) + (fontItalic,))
+    c.create_text(w//2 + borders*3 - widthLines/2, h//10*6, anchor = 'w', text = 'HESLO', fill = colorElement,font = fontMain + (fontSizeBig,) + (fontItalic,))
     entryPassword = tk.Entry(master = c, font = fontWidget + (fontSizeBig,) + (fontStyleNone,), foreground = colorElement,insertbackground=colorElement, show = '*')
     entryPassword.pack()
-    entryPassword.place(x = w//2 + widthLines*2, y = h//10*6 + int(fontSizeBig)/2*3, anchor='w')
+    entryPassword.place(x = w//2 + borders*2 - widthLines/2, y = h//10*6 + int(fontSizeBig)/2*3, anchor='w')
 
     logoBanky = tk.Label(master = c, image = imageLogoBanky, bg = backgroundColor)
     logoBanky.pack()
     logoBanky.place(x = w//4, y  = (h-borders*5)/2 + borders*5, anchor='c')
 
-    buttonLogin = tk.Button(master = c, command = loginAuthentication, width = 10, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'prihlásenie',cursor='hand2',font = fontWidget + (fontSizeBig,) + (fontItalic,))
+    buttonLogin = tk.Button(master = c, command = loginAuthentication, width=10, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'prihlásiť',cursor='hand2',font = fontWidget + (fontSizeBig,) + (fontBold,))
     buttonLogin.pack()
     buttonLogin.place(x = w-borders*2, y = h-borders*2, anchor = 'se')
 
@@ -197,20 +197,20 @@ def timeNow():
     now = now.strftime("%d. %m. %Y %H:%M:%S")
     timeShow = c.create_text(w//2, (borders*5+widthLines/2)/2, anchor = 'c', text = f'Dobrý deň. Aktuálny dátum a čas našej banky: {now}', fill=colorElement,font = fontMain + (fontSizeBig,) + (fontItalic,))
     c.after(1000,timeNow)
-#borders*5-h//borders
+
 def loginAuthentication():
     global c, incorrectNameOrPassword
     loginName = entryName.get()
     loginPassword = entryPassword.get()
     
-    if users[loginName] == loginPassword: ##treba zmenit na to, ze ak je spravne heslo a meno
+    if loginName in users and users[loginName] == loginPassword: ##treba zmenit na to, ze ak je spravne heslo a meno
         c.destroy()
         c = tk.Canvas(width = w, height = h, bg = backgroundColor, cursor = 'arrow')
         c.pack()
         application()
     else:
         c.delete(incorrectNameOrPassword)
-        incorrectNameOrPassword = c.create_text(w//4*3-borders, 500, text = 'nesprávne meno alebo heslo!', fill = colorElement, font = fontMain + (fontSizeBig,) + (fontItalic,))
+        incorrectNameOrPassword = c.create_text(w//4*3-borders, h//10*8-borders, text = 'nesprávne meno alebo heslo!', fill = colorElement, font = fontMain + (fontSizeBig,) + (fontItalic,))
 
 def logout():
     global c
