@@ -10,7 +10,7 @@ DONEdat lavej strane vzduch, oddialit info
 DONErollbox vyber karty dat hore
 miesto 2 tlacidiel odblokovat a zablokovat spravit jedno, ktore bude menit stav
 
-+ Mato, bolo by podla mna super, ked budes mat cas, ze by si vsetky pozicie co tu su zmazal a spravil ich nanovo a vsetky zavisle, teda relativne podla w a h - nie ako teraz, ze niektore maju suradnice 100 a ked zmenime v skole velkost frameu, tak sa to cele rozbije
+DONE Mato, bolo by podla mna super, ked budes mat cas, ze by si vsetky pozicie co tu su zmazal a spravil ich nanovo a vsetky zavisle, teda relativne podla w a h - nie ako teraz, ze niektore maju suradnice 100 a ked zmenime v skole velkost frameu, tak sa to cele rozbije
 '''
 
 ##########zide sa na neskor
@@ -61,7 +61,7 @@ c.grid(sticky='s')
 ########## variables
 
 users = {'kubo': 'ok', 'mato':'matojefrajer'} ##mena a hesla na prihlasovanie -- neskor by bolo dobre aby sme to dali do nejakej databazy v subore alebo co
-users.update({'' : ''}) ## toto vzdy odkomentuj aby si nemusel stale pri spustani zadavat login
+##users.update({'' : ''}) ## toto vzdy odkomentuj aby si nemusel stale pri spustani zadavat login
 
 lineCislo_karty = incorrectNameOrPassword = lineClientName = lineDatum_vytvorenia = timeShow = lineDatum_platnosti = lineDlzna_suma = lineBlokovana = incorrectNameOrPassword = ''
 
@@ -99,20 +99,20 @@ def application():
     c.delete('all')
     essentialLook()
     
-    headline1 = c.create_text(w//4, (borders*5+widthLines/2)/2,text='Dobrý deň. Vyberte účet:', anchor = 'c', fill=colorElement,font = fontMain + (fontSizeMedium,) + (fontItalic,))
-    headline2 = c.create_text(w//4,200,text='Karty klienta', anchor = 'center', fill=colorElement,font = fontMain + (fontSizeBig,) + (fontBold,))
-    headline3 = c.create_text(w//4*3, borders*7, text='Vytvorenie novej karty', anchor = 'center', fill=colorElement,font = fontMain + (fontSizeBig,) + (fontBold,))
+    headline1 = c.create_text(borders*2, (borders*5+widthLines/2)/2,text='Aktuálne pracujete s klientom:', anchor = 'w', fill=colorElement,font = fontMain + (fontSizeMedium,) + (fontItalic,))
+    headline2 = c.create_text(w//4, h//5, text='KARTY KLIENTA', anchor = 'center', fill=colorElement,font = fontMain + (fontSizeMedium,) + (fontBold,))
+    headline3 = c.create_text(w//4*3, h//5, text='VYTVORENIE NOVEJ KARTY', anchor = 'center', fill=colorElement,font = fontMain + (fontSizeMedium,) + (fontBold,))
     headline4 = c.create_text(w//8*5 + widthLines, h//2 + borders*10, text='debetná karta', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'n')
     headline5 = c.create_text(w//8*7 - widthLines, h//2 + borders*10, text = 'kreditná karta', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'n')
-    headline6 = c.create_text(w//2 + borders*2 - widthLines/2, h-borders*4, text = 'Limit', font = fontMain + (fontSizeMedium,) + (fontStyleNone,),fill=colorElement,anchor='sw')
-    headline7 = c.create_text(w//2 + borders*2 - widthLines/2, h//2 - borders*8, text = 'Vydavateľ', font = fontMain + (fontSizeMedium,) + (fontStyleNone,),fill=colorElement,anchor='sw')
-    headline8 = c.create_text(w//2 + borders*2 - widthLines/2, h//2 + borders, text = 'Typ', font = fontMain + (fontSizeMedium,) + (fontStyleNone,),fill=colorElement,anchor='w')
+    headline6 = c.create_text(w//2 + borders*2 - widthLines/2, h-borders*4, text = 'Limit', font = fontMain + (fontSizeSmall,) + (fontStyleNone,),fill=colorElement,anchor='sw')
+    headline7 = c.create_text(w//2 + borders*2 - widthLines/2, h//2 - borders*8, text = 'Vydavateľ', font = fontMain + (fontSizeSmall,) + (fontStyleNone,),fill=colorElement,anchor='sw')
+    headline8 = c.create_text(w//2 + borders*2 - widthLines/2, h//2 + borders, text = 'Typ', font = fontMain + (fontSizeSmall,) + (fontStyleNone,),fill=colorElement,anchor='w')
 
 
     comboUcet = ttk.Combobox(font = fontWidget + (fontSizeSmall,) + (fontStyleNone,), values = clients, width = 30, state='readonly', justify = 'center')
     comboUcet.current(0) ##ktore sa ukaze na zaciatku ako default
     comboUcet.pack()
-    comboUcet.place(x = w//2, y = (borders*5+widthLines/2)/2,anchor='w')
+    comboUcet.place(x = w//2, y = (borders*5+widthLines/2)/2, anchor='c')
 
     radioButtonVisa = tk.Radiobutton(indicatoron='false',selectcolor=colorElement,highlightthickness=20,activebackground=colorElement,bg = backgroundColor, cursor='hand2',image = imageVisa,variable = visaMastercard,value = 1)
     radioButtonVisa.pack()
@@ -138,38 +138,33 @@ def application():
     createCardButton.pack()
     createCardButton.place(x = w-borders*2, y = h-borders*2, anchor = 'se')
 
+    displayCard(cardsList[0]) ## musi zostat pred comboCards!
+    ## comboBox pre ucty klienta
+    comboCards = ttk.Combobox(font = fontWidget + (fontSizeSmall,) + (fontStyleNone,), values = cardsList, width = 30, state='readonly', justify = 'center')
+    comboCards.current(0)
+    comboCards.pack()
+    comboCards.place(x = borders*2, y = h//4 + borders, anchor='sw')
+    comboCards.bind("<<ComboboxSelected>>", chosenCard)
+
     blockCardButton = tk.Button(width = 15, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'blokovať kartu',cursor='hand2',font = fontWidget + (fontSizeSmall,) + (fontItalic,))
     blockCardButton.pack()
-    blockCardButton.place(x = w//2-borders, y = h//borders*6,anchor='ne')
-
-    unblockCardButton = tk.Button(width = 10, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'odblokovať kartu',cursor='hand2',font = fontWidget + (fontSizeSmall,) + (fontItalic,))
-    unblockCardButton.pack()
-    unblockCardButton.place(x = w//2-borders, y = h//borders*6+50,anchor='ne')
+    blockCardButton.place(x = w//2 - borders*2 + widthLines/2, y = h - borders*2, anchor = 'se')
 
     deleteCardButton = tk.Button(command = deleteCard,width = 15, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'vymazať kartu',cursor='hand2',font = fontWidget + (fontSizeSmall,) + (fontItalic,))
     deleteCardButton.pack()
-    deleteCardButton.place(x = w//2-borders, y = h//borders*6+50*2,anchor='ne')
+    deleteCardButton.place(x = w//2 - borders*2 + widthLines/2, y = h - borders*5, anchor = 'se')
 
     logoutButton = tk.Button(command = logout, width = 10, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'odhlásiť',cursor='hand2',font = fontWidget + (fontSizeMedium,) + (fontBold,))
     logoutButton.pack()
     logoutButton.place(x = w-borders*2, y = (borders*5+widthLines/2)/2, anchor='e')
 
 
-
-    displayCard(cardsList[0])
-
-    ## comboBox pre ucty klienta
-    comboCards = ttk.Combobox(font = fontWidget + (fontSizeBig,) + (fontStyleNone,), values = cardsList, width = 35, state='readonly', justify = 'center')
-    comboCards.current(0)
-    comboCards.pack()
-    comboCards.place(x = w//4, y = h//5, anchor='c')
-    comboCards.bind("<<ComboboxSelected>>", chosenCard)
     
 
 def loginScreen():
     global entryName, entryPassword
     essentialLook()
-    c.create_text(w - borders, borders*2 , anchor = 'se', text = 'verzia: 1.3.4', fill=colorElement,font = fontMain + (fontSizeSmall,) + (fontItalic,))
+    c.create_text(w - borders, borders*2 , anchor = 'se', text = 'verzia: 84.6.2', fill=colorElement,font = fontMain + (fontSizeSmall,) + (fontItalic,))
 
     timeNow()
     c.create_text(w//2 + borders*3 - widthLines/2, h//10*4, anchor = 'w',text = 'MENO', fill=colorElement, font = fontMain + (fontSizeBig,) + (fontItalic,))
@@ -222,15 +217,16 @@ def logout():
 def displayCard(cislo_karty):
     global clientName, vydavatel, datum_platnosti, id_uctu, dlzna_suma, blokovana, datum_vytvorenia, lineCislo_karty, lineClientName, lineDatum_vytvorenia, lineDatum_platnosti, lineDlzna_suma, lineBlokovana
     c.delete(lineCislo_karty, lineClientName, lineDatum_vytvorenia, lineDatum_platnosti, lineDlzna_suma, lineBlokovana)
-    lineClientName = c.create_text(borders + 20, h//borders*6,text= f'Meno klienta: {clientName}', anchor = 'nw', fill=colorElement,font = fontMain + (fontSizeBig,) + (fontItalic,))
-    lineCislo_karty = c.create_text(borders + 20, h//borders*6 + 70, text= f'Cislo karty: {cislo_karty}', anchor = 'nw', fill=colorElement,font = fontMain + (fontSizeBig,) + (fontItalic,))
-    lineDatum_vytvorenia = c.create_text(borders + 20, h//borders*6 + 70*2, text= f'Datum vytvorenia: {datum_vytvorenia}', anchor = 'nw', fill=colorElement,font = fontMain + (fontSizeBig,) + (fontItalic,))
-    lineDatum_platnosti = c.create_text(borders + 20, h//borders*6 + 70*3, text= f'Datum platnosti: {datum_platnosti}', anchor = 'nw', fill=colorElement,font = fontMain + (fontSizeBig,) + (fontItalic,))
-    lineDlzna_suma = c.create_text(borders + 20, h//borders*6 + 70*4, text= f'Dlzna suma: {dlzna_suma}$', anchor = 'nw', fill=colorElement,font = fontMain + (fontSizeBig,) + (fontItalic,))
+
+    lineClientName =       c.create_text(borders*2, h//3 + borders*1, text= f'Meno klienta: {clientName}', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'w')
+    lineCislo_karty =      c.create_text(borders*2, h//3 + borders*3, text= f'Cislo karty: {cislo_karty}', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'w')
+    lineDatum_vytvorenia = c.create_text(borders*2, h//3 + borders*5, text= f'Datum vytvorenia: {datum_vytvorenia}', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'w')
+    lineDatum_platnosti =  c.create_text(borders*2, h//3 + borders*7, text= f'Datum platnosti: {datum_platnosti}', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'w')
+    lineDlzna_suma =       c.create_text(borders*2, h//3 + borders*9, text= f'Dlzna suma: {dlzna_suma}$', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'w')
     if blokovana == '0':
-        lineBlokovana = c.create_text(borders + 20, h//borders*6 + 70*5, text='Stav: aktívna', anchor = 'nw', fill=colorElement,font = fontMain + (fontSizeBig,) + (fontItalic,))
+        lineBlokovana =    c.create_text(borders*2, h//3 + borders*11, text='Stav: aktívna', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'w')
     elif blokovana == '1':
-        lineBlokovana = c.create_text(borders + 20, h//borders*6 + 70*5, text='Stav: blokovaná', anchor = 'nw', fill=colorElement,font = fontMain + (fontSizeBig,) + (fontItalic,))
+        lineBlokovana =    c.create_text(borders*2, h//3 + borders*11, text='Stav: blokovaná', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'w')
 
 def chosenCard(f):
     ##bez toho argumentu to nefunguje.. kvoli tomu ze sa to vola v c.bind  a tam je vzdy dany pozicny argument
