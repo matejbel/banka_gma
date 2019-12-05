@@ -2,15 +2,17 @@
 GALINSKI:
 DONEzladit dizajn s ostatnymi
 DONE radiobutton - nech je jasne, ked je kliknute
-miesto rollboxu na klienta spravit search engine
 DONEvydavatel, typ karty, limit (rodelit pravu stranu, teda ze sa nevybera zo 4 moznosti, ale dvoch a dvoch)
 DONE farba pisma nech je v entry citatelna
 DONE tlacidlo na odhlasenie sa
 DONEdat lavej strane vzduch, oddialit info
 DONErollbox vyber karty dat hore
-miesto 2 tlacidiel odblokovat a zablokovat spravit jedno, ktore bude menit stav
-
 DONE Mato, bolo by podla mna super, ked budes mat cas, ze by si vsetky pozicie co tu su zmazal a spravil ich nanovo a vsetky zavisle, teda relativne podla w a h - nie ako teraz, ze niektore maju suradnice 100 a ked zmenime v skole velkost frameu, tak sa to cele rozbije
+
+miesto rollboxu na klienta spravit search engine
+miesto 2 tlacidiel odblokovat a zablokovat spravit jedno, ktore bude menit stav
+pridat do comboboxu klienti rodne cisla
+rodne cislo ako 'heslo'
 '''
 
 ##########zide sa na neskor
@@ -93,6 +95,54 @@ def essentialLook():
     horBorder = c.create_line(0, borders*5, w, borders*5, fill = colorElement, width = widthLines) #before: y = h//borders*3
     vertLine = c.create_line(w//2, borders*5, w//2, h, width = widthLines, fill = colorElement)
 
+def timeNow():
+    global timeShow
+    c.delete(timeShow)
+    now = datetime.datetime.now()
+    now = now.strftime("%d. %m. %Y %H:%M:%S")
+    timeShow = c.create_text(w//2, (borders*5+widthLines/2)/2, anchor = 'c', text = f'Dobrý deň. Aktuálny dátum a čas našej banky: {now}', fill=colorElement,font = fontMain + (fontSizeBig,) + (fontItalic,))
+    c.after(1000,timeNow)
+
+def loginAuthentication():
+    global c, incorrectNameOrPassword
+    loginName = entryName.get()
+    loginPassword = entryPassword.get()
+    
+    if loginName in users and users[loginName] == loginPassword: ##treba zmenit na to, ze ak je spravne heslo a meno
+        c.destroy()
+        c = tk.Canvas(width = w, height = h, bg = backgroundColor, cursor = 'arrow')
+        c.pack()
+        application()
+    else:
+        c.delete(incorrectNameOrPassword)
+        incorrectNameOrPassword = c.create_text(w//4*3-borders, h//10*8-borders, text = 'nesprávne meno alebo heslo!', fill = colorElement, font = fontMain + (fontSizeBig,) + (fontItalic,))
+
+def loginScreen():
+    global entryName, entryPassword
+    essentialLook()
+    c.create_text(w - borders, borders*2 , anchor = 'se', text = 'verzia: 84.6.2', fill=colorElement,font = fontMain + (fontSizeSmall,) + (fontItalic,))
+
+    timeNow()
+    c.create_text(w//2 + borders*3 - widthLines/2, h//10*4, anchor = 'w',text = 'MENO', fill=colorElement, font = fontMain + (fontSizeBig,) + (fontItalic,))
+    entryName = tk.Entry(master = c, font = fontWidget + (fontSizeBig,) + (fontStyleNone,), foreground = colorElement,insertbackground=colorElement)
+    entryName.pack()
+    entryName.place(x = w//2 + borders*2 - widthLines/2, y = h//10*4 + int(fontSizeBig)/2*3, anchor='w')
+
+    c.create_text(w//2 + borders*3 - widthLines/2, h//10*6, anchor = 'w', text = 'HESLO', fill = colorElement,font = fontMain + (fontSizeBig,) + (fontItalic,))
+    entryPassword = tk.Entry(master = c, font = fontWidget + (fontSizeBig,) + (fontStyleNone,), foreground = colorElement,insertbackground=colorElement, show = '*')
+    entryPassword.pack()
+    entryPassword.place(x = w//2 + borders*2 - widthLines/2, y = h//10*6 + int(fontSizeBig)/2*3, anchor='w')
+
+    logoBanky = tk.Label(master = c, image = imageLogoBanky, bg = backgroundColor)
+    logoBanky.pack()
+    logoBanky.place(x = w//4, y  = (h-borders*5)/2 + borders*5, anchor='c')
+
+    buttonLogin = tk.Button(master = c, command = loginAuthentication, width=10, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'prihlásiť',cursor='hand2',font = fontWidget + (fontSizeBig,) + (fontBold,))
+    buttonLogin.pack()
+    buttonLogin.place(x = w-borders*2, y = h-borders*2, anchor = 'se')
+
+
+
 def application():
     global comboCards
     
@@ -158,62 +208,6 @@ def application():
     logoutButton.pack()
     logoutButton.place(x = w-borders*2, y = (borders*5+widthLines/2)/2, anchor='e')
 
-
-    
-
-def loginScreen():
-    global entryName, entryPassword
-    essentialLook()
-    c.create_text(w - borders, borders*2 , anchor = 'se', text = 'verzia: 84.6.2', fill=colorElement,font = fontMain + (fontSizeSmall,) + (fontItalic,))
-
-    timeNow()
-    c.create_text(w//2 + borders*3 - widthLines/2, h//10*4, anchor = 'w',text = 'MENO', fill=colorElement, font = fontMain + (fontSizeBig,) + (fontItalic,))
-    entryName = tk.Entry(master = c, font = fontWidget + (fontSizeBig,) + (fontStyleNone,), foreground = colorElement,insertbackground=colorElement)
-    entryName.pack()
-    entryName.place(x = w//2 + borders*2 - widthLines/2, y = h//10*4 + int(fontSizeBig)/2*3, anchor='w')
-
-    c.create_text(w//2 + borders*3 - widthLines/2, h//10*6, anchor = 'w', text = 'HESLO', fill = colorElement,font = fontMain + (fontSizeBig,) + (fontItalic,))
-    entryPassword = tk.Entry(master = c, font = fontWidget + (fontSizeBig,) + (fontStyleNone,), foreground = colorElement,insertbackground=colorElement, show = '*')
-    entryPassword.pack()
-    entryPassword.place(x = w//2 + borders*2 - widthLines/2, y = h//10*6 + int(fontSizeBig)/2*3, anchor='w')
-
-    logoBanky = tk.Label(master = c, image = imageLogoBanky, bg = backgroundColor)
-    logoBanky.pack()
-    logoBanky.place(x = w//4, y  = (h-borders*5)/2 + borders*5, anchor='c')
-
-    buttonLogin = tk.Button(master = c, command = loginAuthentication, width=10, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'prihlásiť',cursor='hand2',font = fontWidget + (fontSizeBig,) + (fontBold,))
-    buttonLogin.pack()
-    buttonLogin.place(x = w-borders*2, y = h-borders*2, anchor = 'se')
-
-def timeNow():
-    global timeShow
-    c.delete(timeShow)
-    now = datetime.datetime.now()
-    now = now.strftime("%d. %m. %Y %H:%M:%S")
-    timeShow = c.create_text(w//2, (borders*5+widthLines/2)/2, anchor = 'c', text = f'Dobrý deň. Aktuálny dátum a čas našej banky: {now}', fill=colorElement,font = fontMain + (fontSizeBig,) + (fontItalic,))
-    c.after(1000,timeNow)
-
-def loginAuthentication():
-    global c, incorrectNameOrPassword
-    loginName = entryName.get()
-    loginPassword = entryPassword.get()
-    
-    if loginName in users and users[loginName] == loginPassword: ##treba zmenit na to, ze ak je spravne heslo a meno
-        c.destroy()
-        c = tk.Canvas(width = w, height = h, bg = backgroundColor, cursor = 'arrow')
-        c.pack()
-        application()
-    else:
-        c.delete(incorrectNameOrPassword)
-        incorrectNameOrPassword = c.create_text(w//4*3-borders, h//10*8-borders, text = 'nesprávne meno alebo heslo!', fill = colorElement, font = fontMain + (fontSizeBig,) + (fontItalic,))
-
-def logout():
-    global c
-    c.destroy()
-    c = tk.Canvas(width = w, height = h, bg = backgroundColor, cursor = 'arrow')
-    c.pack()
-    loginScreen()
- 
 def displayCard(cislo_karty):
     global clientName, vydavatel, datum_platnosti, id_uctu, dlzna_suma, blokovana, datum_vytvorenia, lineCislo_karty, lineClientName, lineDatum_vytvorenia, lineDatum_platnosti, lineDlzna_suma, lineBlokovana
     c.delete(lineCislo_karty, lineClientName, lineDatum_vytvorenia, lineDatum_platnosti, lineDlzna_suma, lineBlokovana)
@@ -232,7 +226,7 @@ def chosenCard(f):
     ##bez toho argumentu to nefunguje.. kvoli tomu ze sa to vola v c.bind  a tam je vzdy dany pozicny argument
     
     displayCard(cardsList[comboCards.current()])
-
+ 
 def deleteCard():
     messageBox = messagebox.askquestion("vymazať kartu", "Naozaj chcete vymazať kartu?", icon='warning')
     if messageBox == 'yes':
@@ -240,7 +234,18 @@ def deleteCard():
     else:
         print ("karta nebola vymazaná")
 
+def logout():
+    global c
+    c.destroy()
+    c = tk.Canvas(width = w, height = h, bg = backgroundColor, cursor = 'arrow')
+    c.pack()
+    loginScreen()
 
+def read():
+    fileKarty = open('karty.txt', 'a')
+    fileUcty = open('ucty.txt', 'a')
+
+    
 
 
 
