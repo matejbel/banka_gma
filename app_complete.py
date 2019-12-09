@@ -44,8 +44,12 @@ from tkinter import ttk, messagebox
 import datetime
 w = 1280
 h = 720
-borders = 20
-widthLines = 15
+if w > h:
+    borders = h//36
+    widthLines = h//48
+elif h >= w:
+    borders = w//36
+    widthLines = w//48
 fontWidget = ('Helvetica',)
 fontMain = ('Arial',)
 fontSizeBig = '30'
@@ -63,7 +67,7 @@ c.grid(sticky='s')
 ########## variables
 
 users = {'kubo': 'ok', 'mato':'matojefrajer'} ##mena a hesla na prihlasovanie -- neskor by bolo dobre aby sme to dali do nejakej databazy v subore alebo co
-##users.update({'' : ''}) ## toto vzdy odkomentuj aby si nemusel stale pri spustani zadavat login
+users.update({'' : ''}) ## toto vzdy odkomentuj aby si nemusel stale pri spustani zadavat login
 
 lineCislo_karty = incorrectNameOrPassword = lineClientName = lineDatum_vytvorenia = timeShow = lineDatum_platnosti = lineDlzna_suma = lineBlokovana = incorrectNameOrPassword = ''
 
@@ -144,7 +148,7 @@ def loginScreen():
 
 
 def application():
-    global comboCards
+    global comboCards, blockCardButton
     
     c.delete('all')
     essentialLook()
@@ -196,7 +200,7 @@ def application():
     comboCards.place(x = borders*2, y = h//4 + borders, anchor='sw')
     comboCards.bind("<<ComboboxSelected>>", chosenCard)
 
-    blockCardButton = tk.Button(width = 15, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'blokovať kartu',cursor='hand2',font = fontWidget + (fontSizeSmall,) + (fontItalic,))
+    blockCardButton = tk.Button(command = blockCard, width = 15, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'blokovať kartu',cursor='hand2',font = fontWidget + (fontSizeSmall,) + (fontItalic,))
     blockCardButton.pack()
     blockCardButton.place(x = w//2 - borders*2 + widthLines/2, y = h - borders*2, anchor = 'se')
 
@@ -208,6 +212,15 @@ def application():
     logoutButton.pack()
     logoutButton.place(x = w-borders*2, y = (borders*5+widthLines/2)/2, anchor='e')
 
+def blockCard():
+    global blockCardButton, blokovana
+    if blockCardButton['text'] == 'blokovať kartu':
+        blockCardButton.config(text = 'odblokovať kartu')
+        #notificLine = c.create_text(borders*2, 500, text='Karta bola zablokovaná', font='50', anchor = 'w')  # na to by trebalo vacsiu upravu
+        #c.after(1000, application)
+    elif blockCardButton['text'] == 'odblokovať kartu':
+        blockCardButton.config(text = 'blokovať kartu')
+        
 def displayCard(cislo_karty):
     global clientName, vydavatel, datum_platnosti, id_uctu, dlzna_suma, blokovana, datum_vytvorenia, lineCislo_karty, lineClientName, lineDatum_vytvorenia, lineDatum_platnosti, lineDlzna_suma, lineBlokovana
     c.delete(lineCislo_karty, lineClientName, lineDatum_vytvorenia, lineDatum_platnosti, lineDlzna_suma, lineBlokovana)
