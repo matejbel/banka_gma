@@ -58,7 +58,7 @@ c.grid(sticky='s')
 
 users = {'kubo': 'ok', 'mato':'matojefrajer'} ##mena a hesla na prihlasovanie -- neskor by bolo dobre aby sme to dali do nejakej databazy v subore alebo co
 users.update({'' : ''}) ## toto vzdy odkomentuj aby si nemusel stale pri spustani zadavat login
-clients = {'jano':'mrkva', 'fero' :'dreveny', 'jano':'stolny'}
+clients = ['Jano Mrkva','Dominik Dano', 'Jano Stolny']
 foundClients = []
 
 
@@ -148,7 +148,7 @@ def loginScreen():
     buttonLogin.place(x = w-borders*2, y = h-borders*2, anchor = 'se')
 
 def chooseClientScreen():
-    global searchEngineEntry,c
+    global searchEngineEntry,c,listboxClients
 
     essentialLook()
     c.create_text(w - borders, borders*2 , anchor = 'se', text = 'verzia: 84.6.2', fill=colorElement,font = fontMain + (fontSizeSmall,) + (fontItalic,))
@@ -163,9 +163,15 @@ def chooseClientScreen():
     searchEngineButton.pack()
     searchEngineButton.place(x = w/5*4+borders, y = h/4, anchor='e')
 
-    comboClients = ttk.Combobox(font = fontWidget + (fontSizeSmall,) + (fontStyleNone,), values = foundClients, width = 30, state='readonly', justify = 'center')
-    comboClients.pack()
-    comboClients.place(x = w/2, y = h/2-borders*3, anchor='c')
+##    comboClients = ttk.Combobox(font = fontWidget + (fontSizeSmall,) + (fontStyleNone,), values = foundClients, width = 30, state='readonly', justify = 'center')
+##    comboClients.pack()
+##    comboClients.place(x = w/2, y = h/2-borders*3, anchor='c')
+
+
+    listboxClients = tk.Listbox(borderwidth = 10,activestyle='underline',cursor='hand2',height = 8,selectbackground=backgroundColor,width=50,font = fontWidget + (fontSizeMedium,) + (fontStyleNone,))
+    listboxClients.pack()
+    listboxClients.place(x = w/2, y = h/8*5, anchor='c')
+
 
 
 
@@ -302,12 +308,15 @@ def handleReturn(event):
 def searchClient():
     global foundClients
     foundClients = []
-    print(clients.items())
+    listboxClients.delete(0, 'end')
     searchName = searchEngineEntry.get()
-    for key, value in clients.items():
-##        print(f'{key} {value}')
-        if key == searchName or value == searchName:
-            foundClients.append(f'{key} {value}')
+    for cl in clients:
+        cl = cl.lower().split()
+        for i in range(len(cl)):
+            if cl[i] == searchName.lower():
+                foundClients.append(cl)
+    for item in foundClients:
+        listboxClients.insert('end', item)
     
     
 
