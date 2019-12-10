@@ -80,7 +80,7 @@ imageLogoBanky = tk.PhotoImage(file = 'obrazky/logobanky.png')
 ##clients = ['--- vyberte klienta ---','Jano', 'Fero', 'Dominik']
 cardsList = ['--- vyberte kartu ---', 'SK506065320', 'SK35408540635', 'SK0468785343', 'and more...', 'SK506065320', 'SK35408540635', 'SK0468785343', 'and more...']
 
-clientName = 'Maros Klamar'
+clientName = currentClient
 datum_vytvorenia = '20/11/2018'
 vydavatel = 'Visa'
 cislo_karty = ''
@@ -293,13 +293,23 @@ def changeClient():
     c.pack()
     chooseClientScreen()
 
-def fileOpen():
-    fileKarty = open('karty.txt', 'a')
-    fileUcty = open('ucty.txt', 'a')
-
-def fileClose():
+def fileInfo():  ## mrte zle riesenie..... sere ma to
+    fileKarty = open('karty.txt', 'r')
+    karty = ['kartyId', 'kartyVydavatel', 'kartyTyp', 'kartyCislo', 'kartyPlatnost', 'kartyCvv', 'kartyIdUctu', 'kartyDlzna', 'kartyBlokovana']
+    line = fileKarty.readline().strip()
+    for i in range (int(line)):
+        line = fileKarty.readline().strip()
+        for a in range(len(karty)-1):
+            poz = line.find(';')
+            print(poz)
+            karty[a] = line[:poz]
+            line = line[poz+1:]
+        karty[-1] = line[:]
     fileKarty.close()
-    fileUcty.close()
+
+    
+    #fileUcty = open('ucty.txt', 'a')
+    #fileUcty.close() 
 
 def handleReturn(event):
     print("return: event.widget is",event.widget)
