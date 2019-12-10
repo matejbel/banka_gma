@@ -50,6 +50,7 @@ fontBold = 'bold'
 fontStyleNone = ''
 colorElement = 'black'
 backgroundColor = '#71CAE7'
+verzia = 'verzia: 84.6.2'
 c = tk.Canvas(width = w, height = h, bg = backgroundColor, cursor = 'arrow')
 c.grid(sticky='s')
 
@@ -122,7 +123,7 @@ def loginScreen():
     vertLine = c.create_line(w//2, borders*5, w//2, h, width = widthLines, fill = colorElement)
 
     
-    c.create_text(w - borders, borders*2 , anchor = 'se', text = 'verzia: 84.6.2', fill=colorElement,font = fontMain + (fontSizeSmall,) + (fontItalic,))
+    c.create_text(w - borders, borders*2 , anchor = 'se', text = verzia, fill=colorElement,font = fontMain + (fontSizeSmall,) + (fontItalic,))
 
     timeNow()
     c.create_text(w//2 + borders*3 - widthLines/2, h//10*4, anchor = 'w',text = 'MENO', fill=colorElement, font = fontMain + (fontSizeBig,) + (fontItalic,))
@@ -151,8 +152,8 @@ def chooseClientScreen():
     global searchEngineEntry,c
 
     essentialLook()
-    c.create_text(w - borders, borders*2 , anchor = 'se', text = 'verzia: 84.6.2', fill=colorElement,font = fontMain + (fontSizeSmall,) + (fontItalic,))
-    c.create_text(w/10*3+borders, h/4, text = 'vyhľadanie klienta', font = fontMain + (fontSizeBig,) + (fontStyleNone,),fill=colorElement,anchor='e')
+    c.create_text(w - borders, borders*2 , anchor = 'se', text = verzia, fill=colorElement,font = fontMain + (fontSizeSmall,) + (fontItalic,))
+    c.create_text(w//4, h/4, text = 'vyhľadanie klienta', font = fontMain + (fontSizeBig,) + (fontStyleNone,),fill=colorElement, anchor='c')
     timeNow()
     
     searchEngineEntry = tk.Entry(font = fontWidget + (fontSizeMedium,) + (fontStyleNone,), foreground = colorElement,insertbackground=colorElement)
