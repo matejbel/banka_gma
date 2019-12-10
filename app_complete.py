@@ -50,6 +50,7 @@ fontBold = 'bold'
 fontStyleNone = ''
 colorElement = 'black'
 backgroundColor = '#71CAE7'
+verzia = 'verzia: 84.6.2'
 c = tk.Canvas(width = w, height = h, bg = backgroundColor, cursor = 'arrow')
 c.grid(sticky='s')
 
@@ -79,7 +80,7 @@ imageLogoBanky = tk.PhotoImage(file = 'obrazky/logobanky.png')
 ##clients = ['--- vyberte klienta ---','Jano', 'Fero', 'Dominik']
 cardsList = ['--- vyberte kartu ---', 'SK506065320', 'SK35408540635', 'SK0468785343', 'and more...', 'SK506065320', 'SK35408540635', 'SK0468785343', 'and more...']
 
-clientName = 'Maros Klamar'
+clientName = currentClient
 datum_vytvorenia = '20/11/2018'
 vydavatel = 'Visa'
 cislo_karty = ''
@@ -122,7 +123,7 @@ def loginScreen():
     vertLine = c.create_line(w//2, borders*5, w//2, h, width = widthLines, fill = colorElement)
 
     
-    c.create_text(w - borders, borders*2 , anchor = 'se', text = 'verzia: 84.6.2', fill=colorElement,font = fontMain + (fontSizeSmall,) + (fontItalic,))
+    c.create_text(w - borders, borders*2 , anchor = 'se', text = verzia, fill=colorElement,font = fontMain + (fontSizeSmall,) + (fontItalic,))
 
     timeNow()
     c.create_text(w//2 + borders*3 - widthLines/2, h//10*4, anchor = 'w',text = 'MENO', fill=colorElement, font = fontMain + (fontSizeBig,) + (fontItalic,))
@@ -151,15 +152,15 @@ def chooseClientScreen():
     global searchEngineEntry,c,listboxClients
 
     essentialLook()
-    c.create_text(w - borders, borders*2 , anchor = 'se', text = 'verzia: 84.6.2', fill=colorElement,font = fontMain + (fontSizeSmall,) + (fontItalic,))
-    c.create_text(w/10*3+borders, h/4, text = 'vyhľadanie klienta', font = fontMain + (fontSizeBig,) + (fontStyleNone,),fill=colorElement,anchor='e')
+    c.create_text(w - borders, borders*2 , anchor = 'se', text = verzia, fill=colorElement,font = fontMain + (fontSizeSmall,) + (fontItalic,))
+    c.create_text(w/10*3+borders, h/4, text = 'vyhľadanie klienta', font = fontMain + (fontSizeBig,) + (fontStyleNone,),fill=colorElement, anchor='e')
     timeNow()
     
     searchEngineEntry = tk.Entry(font = fontWidget + (fontSizeMedium,) + (fontStyleNone,), foreground = colorElement,insertbackground=colorElement)
     searchEngineEntry.pack()
     searchEngineEntry.place(x = w/5*3, y = h/4, anchor='e')
 
-    searchEngineButton = tk.Button(command = searchClient, width = 15, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'hľadať',cursor='hand2',font = fontWidget + (fontSizeMedium,) + (fontBold,))
+    searchEngineButton = tk.Button(command = searchClient, width = 15, bg=colorElement, activebackground = colorElement, foreground = backgroundColor, text = 'hľadať', cursor='hand2', font = fontWidget + (fontSizeMedium,) + (fontBold,))
     searchEngineButton.pack()
     searchEngineButton.place(x = w/5*4+borders, y = h/4, anchor='e')
 
@@ -292,14 +293,29 @@ def logout():
     loginScreen()
 
 def changeClient():
+    global c
     c.destroy()
     c = tk.Canvas(width = w, height = h, bg = backgroundColor, cursor = 'arrow')
     c.pack()
     chooseClientScreen()
 
-def read():
-    fileKarty = open('karty.txt', 'a')
-    fileUcty = open('ucty.txt', 'a')
+def fileInfo():  ## mrte zle riesenie..... sere ma to
+    fileKarty = open('karty.txt', 'r')
+    karty = ['kartyId', 'kartyVydavatel', 'kartyTyp', 'kartyCislo', 'kartyPlatnost', 'kartyCvv', 'kartyIdUctu', 'kartyDlzna', 'kartyBlokovana']
+    line = fileKarty.readline().strip()
+    for i in range (int(line)):
+        line = fileKarty.readline().strip()
+        for a in range(len(karty)-1):
+            poz = line.find(';')
+            print(poz)
+            karty[a] = line[:poz]
+            line = line[poz+1:]
+        karty[-1] = line[:]
+    fileKarty.close()
+
+    
+    #fileUcty = open('ucty.txt', 'a')
+    #fileUcty.close() 
 
 def handleReturn(event):
     print("return: event.widget is",event.widget)
@@ -317,6 +333,7 @@ def searchClient():
                 foundClients.append(cl)
     for item in foundClients:
         listboxClients.insert('end', item)
+
     
     
 
