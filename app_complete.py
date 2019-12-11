@@ -50,7 +50,8 @@ fontBold = 'bold'
 fontStyleNone = ''
 colorElement = 'black'
 backgroundColor = '#71CAE7'
-verzia = 'verzia: 84.6.2'
+##verzia = 'verzia: 84.6.2'
+verzia = ''
 c = tk.Canvas(width = w, height = h, bg = backgroundColor, cursor = 'arrow')
 c.grid(sticky='s')
 
@@ -101,7 +102,7 @@ def timeNow():
     c.delete(timeShow)
     now = datetime.datetime.now()
     now = now.strftime("%d. %m. %Y %H:%M:%S")
-    timeShow = c.create_text(w//2, (borders*5+widthLines/2)/2, anchor = 'c', text = f'Dobrý deň. Aktuálny dátum a čas našej banky: {now}', fill=colorElement,font = fontMain + (fontSizeBig,) + (fontItalic,))
+    timeShow = c.create_text(w//2, (borders*5+widthLines/2)/2, anchor = 'c', text = f'Dobrý deň. Aktuálny dátum a čas našej banky: {now}', fill=colorElement,font = fontMain + (fontSizeBig,) + (fontStyleNone,))
     c.after(1000,timeNow)
 
 def loginAuthentication():
@@ -127,7 +128,7 @@ def loginScreen():
     c.create_text(w - borders, borders*2 , anchor = 'se', text = verzia, fill=colorElement,font = fontMain + (fontSizeSmall,) + (fontItalic,))
 
     timeNow()
-    c.create_text(w//2 + borders*3 - widthLines/2, h//10*4, anchor = 'w',text = 'MENO', fill=colorElement, font = fontMain + (fontSizeBig,) + (fontItalic,))
+    c.create_text(w//2 + borders*3 - widthLines/2, h//10*4, anchor = 'w',text = 'MENO', fill=colorElement, font = fontMain + (fontSizeBig,) + (fontStyleNone,))
     entryName = tk.Entry(c, font = fontWidget + (fontSizeBig,) + (fontStyleNone,), foreground = colorElement,insertbackground=colorElement)
     entryName.pack()
     entryName.place(x = w//2 + borders*2 - widthLines/2, y = h//10*4 + int(fontSizeBig)/2*3, anchor='w')
@@ -135,7 +136,7 @@ def loginScreen():
 
 ##    entryName.insert(0,'meno',font='Arial')
     
-    c.create_text(w//2 + borders*3 - widthLines/2, h//10*6, anchor = 'w', text = 'HESLO', fill = colorElement,font = fontMain + (fontSizeBig,) + (fontItalic,))
+    c.create_text(w//2 + borders*3 - widthLines/2, h//10*6, anchor = 'w', text = 'HESLO', fill = colorElement,font = fontMain + (fontSizeBig,) + (fontStyleNone,))
     entryPassword = tk.Entry(c, font = fontWidget + (fontSizeBig,) + (fontStyleNone,), foreground = colorElement,insertbackground=colorElement, show = '*')
     entryPassword.pack()
     entryPassword.place(x = w//2 + borders*2 - widthLines/2, y = h//10*6 + int(fontSizeBig)/2*3, anchor='w')
@@ -193,7 +194,7 @@ def application():
     vertLine = c.create_line(w//2, borders*5, w//2, h, width = widthLines, fill = colorElement)
 
     
-    headline1 = c.create_text(borders*2, (borders*5+widthLines/2)/2,text= f'Aktuálne pracujete s klientom: {currentClient}', anchor = 'w', fill=colorElement,font = fontMain + (fontSizeMedium,) + (fontItalic,))
+    headline1 = c.create_text(borders*2, (borders*5+widthLines/2)/2,text= f'Aktuálne pracujete s klientom: {currentClient}', anchor = 'w', fill=colorElement,font = fontMain + (fontSizeMedium,) + (fontStyleNone,))
     headline2 = c.create_text(w//4, h//5, text='KARTY KLIENTA', anchor = 'center', fill=colorElement,font = fontMain + (fontSizeMedium,) + (fontBold,))
     headline3 = c.create_text(w//4*3, h//5, text='VYTVORENIE NOVEJ KARTY', anchor = 'center', fill=colorElement,font = fontMain + (fontSizeMedium,) + (fontBold,))
     headline4 = c.create_text(w//8*5 + widthLines, h//2 + borders*10, text='debetná karta', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'n')
@@ -301,7 +302,8 @@ def logout():
     loginScreen()
 
 def changeClient():
-    global c
+    global c, currentClient
+    currentClient = ''
     c.destroy()
     c = tk.Canvas(width = w, height = h, bg = backgroundColor, cursor = 'arrow')
     c.pack()
@@ -384,6 +386,7 @@ def searchClient():
 
 def chosenClient(useless):
     global currentClient
+    currentClient = ''
     currentClient = " ".join(listboxClients.get('active')).title()
     print(currentClient)
 
