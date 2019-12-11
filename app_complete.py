@@ -64,10 +64,10 @@ clients = ['Jano Mrkva','Dominik Dano', 'Jano Stolny']
 foundClients = []
 
 
-currentClient = 'Maroš Klamár'
+currentClient = ''
 
 
-lineCislo_karty = incorrectNameOrPassword = lineClientName = lineDatum_vytvorenia = timeShow = lineDatum_platnosti = lineDlzna_suma = lineBlokovana = incorrectNameOrPassword = ''
+lineCislo_karty = zvolKlienta = incorrectNameOrPassword = lineClientName = lineDatum_vytvorenia = timeShow = lineDatum_platnosti = lineDlzna_suma = lineBlokovana = incorrectNameOrPassword = ''
 
 visaMastercard = tk.IntVar() #the system binds the variables and let you know when variable is changed
 debetKredit = tk.IntVar()
@@ -163,7 +163,7 @@ def chooseClientScreen():
 
     searchEngineButton = tk.Button(command = searchClient, width = 15, bg=colorElement, activebackground = colorElement, foreground = backgroundColor, text = 'hľadať', cursor='hand2', font = fontWidget + (fontSizeMedium,) + (fontBold,))
     searchEngineButton.pack()
-    searchEngineButton.place(x = w/5*4+borders, y = h/4, anchor='e')
+    searchEngineButton.place(x = w/5*4+borders, y = h/4, anchor='c')
 
 ##    comboClients = ttk.Combobox(font = fontWidget + (fontSizeSmall,) + (fontStyleNone,), values = foundClients, width = 30, state='readonly', justify = 'center')
 ##    comboClients.pack()
@@ -173,6 +173,12 @@ def chooseClientScreen():
     listboxClients = tk.Listbox(borderwidth = 10,activestyle='underline',cursor='hand2',height = 8,selectbackground=backgroundColor,width=50,font = fontWidget + (fontSizeMedium,) + (fontStyleNone,))
     listboxClients.pack()
     listboxClients.place(x = w/2, y = h/8*5, anchor='c')
+    listboxClients.bind("<<ListboxSelect>>", chosenClient)
+
+    chosenClientButton = tk.Button(command = clientIsChosen, width = 10, bg=colorElement, activebackground = colorElement, foreground = backgroundColor, text = 'zvoliť', cursor='hand2', font = fontWidget + (fontSizeMedium,) + (fontBold,))
+    chosenClientButton.pack()
+    chosenClientButton.place(x = w-borders*6, y = h/2+borders, anchor='c')
+
 
 
 
@@ -287,7 +293,8 @@ def deleteCard():
         print ("karta nebola vymazaná")
 
 def logout():
-    global c
+    global c,currentClient
+    currentClient = ''
     c.destroy()
     c = tk.Canvas(width = w, height = h, bg = backgroundColor, cursor = 'arrow')
     c.pack()
@@ -351,8 +358,20 @@ def searchClient():
     for item in foundClients:
         listboxClients.insert('end', item)
 
-    
-    
+def chosenClient(useless):
+    global currentClient
+    currentClient = " ".join(listboxClients.get('active')).title()
+    print(currentClient)
+
+
+
+def clientIsChosen():
+    global zvolKlienta
+    c.delete(zvolKlienta)
+    if currentClient != '':
+        application()
+    else:
+        zvolKlienta = c.create_text(w/2,h/2-90,text = 'Najprv zvoľte klienta!',fill=colorElement,font = fontMain + (fontSizeMedium,) + (fontStyleNone,))
 
 
 
