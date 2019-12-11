@@ -59,11 +59,11 @@ c.grid(sticky='s')
 
 users = {'kubo': 'ok', 'mato':'matojefrajer'} ##mena a hesla na prihlasovanie -- neskor by bolo dobre aby sme to dali do nejakej databazy v subore alebo co
 users.update({'' : ''}) ## toto vzdy odkomentuj aby si nemusel stale pri spustani zadavat login
-clients = {'jano':'mrkva', 'fero' :'dreveny', 'jano':'stolny'}
+clients = {'Jano':'Mrkva', 'Maroš' :'Klamár', 'Jano':'Stolný'}
 foundClients = []
 
 
-currentClient = 'Maros Klamar'
+currentClient = 'Maroš Klamár'
 
 
 lineCislo_karty = incorrectNameOrPassword = lineClientName = lineDatum_vytvorenia = timeShow = lineDatum_platnosti = lineDlzna_suma = lineBlokovana = incorrectNameOrPassword = ''
@@ -293,19 +293,35 @@ def changeClient():
     c.pack()
     chooseClientScreen()
 
-def fileInfo():  ## mrte zle riesenie..... sere ma to
-    fileKarty = open('karty.txt', 'r')
-    karty = ['kartyId', 'kartyVydavatel', 'kartyTyp', 'kartyCislo', 'kartyPlatnost', 'kartyCvv', 'kartyIdUctu', 'kartyDlzna', 'kartyBlokovana']
-    line = fileKarty.readline().strip()
-    for i in range (int(line)):
-        line = fileKarty.readline().strip()
-        for a in range(len(karty)-1):
-            poz = line.find(';')
-            print(poz)
-            karty[a] = line[:poz]
-            line = line[poz+1:]
-        karty[-1] = line[:]
-    fileKarty.close()
+def fileInfo(currentClient, rodneCislo):
+    currentClient = currentClient.split()
+    currentClient = currentClient[0] + ';' + currentClient[1]
+    fileKlienti = open('klienti.txt', 'r', encoding='utf-8') #encoding treba na spravne citanie diakritiky, bez toho to blbne
+    linesQuantity = fileKlienti.readline().strip()
+    for i in range(int(linesQuantity)):
+        line = fileKlienti.readline().strip()
+        findName = line.find(currentClient)
+        if findName != -1:
+            findRodneCislo = line.find(rodneCislo)
+            if findRodneCislo != -1:
+                currentClientInfo = line
+                currentClientLine = i+1 #poradove cislo riadka s current clientom (nepocita sa do toho aj prvy riadok suboru s poctom riadkov)
+    print(currentClientInfo)
+    print(currentClientLine)
+    fileKlienti.close()
+    
+##    fileKarty = open('karty.txt', 'r')
+##    karty = ['kartyId', 'kartyVydavatel', 'kartyTyp', 'kartyCislo', 'kartyPlatnost', 'kartyCvv', 'kartyIdUctu', 'kartyDlzna', 'kartyBlokovana']
+##    line = fileKarty.readline().strip()
+##    for i in range (int(line)):
+##        line = fileKarty.readline().strip()
+##        for a in range(len(karty)-1):
+##            poz = line.find(';')
+##            print(poz)
+##            karty[a] = line[:poz]
+##            line = line[poz+1:]
+##        karty[-1] = line[:]
+##    fileKarty.close()
 
     
     #fileUcty = open('ucty.txt', 'a')
