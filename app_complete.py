@@ -59,7 +59,7 @@ c.grid(sticky='s')
 
 users = {'kubo': 'ok', 'mato':'matojefrajer'} ##mena a hesla na prihlasovanie -- neskor by bolo dobre aby sme to dali do nejakej databazy v subore alebo co
 users.update({'' : ''}) ## toto vzdy odkomentuj aby si nemusel stale pri spustani zadavat login
-clients = ['Jano Mrkva','Dominik Dano', 'Jano Stolny']
+clients = ['Jano Mrkva','Maroš Klamár', 'Jano Stolný']
 ##clients = {'Jano':'Mrkva', 'Maroš' :'Klamár', 'Jano':'Stolný'}
 foundClients = []
 
@@ -308,38 +308,62 @@ def changeClient():
     chooseClientScreen()
 
 def fileInfo(currentClient, rodneCislo):
-    currentClient = currentClient.split()
-    currentClient = currentClient[0] + ';' + currentClient[1]
-    fileKlienti = open('klienti.txt', 'r', encoding='utf-8') #encoding treba na spravne citanie diakritiky, bez toho to blbne
+    ##### klienti.txt
+    cC = currentClient
+    cC = cC.split()
+    cC = cC[0] + ';' + cC[1]
+    fileKlienti = open('klienti.txt', 'r', encoding='utf-8')
     linesQuantity = fileKlienti.readline().strip()
     for i in range(int(linesQuantity)):
         line = fileKlienti.readline().strip()
-        findName = line.find(currentClient)
+        findName = line.find(cC)
         if findName != -1:
             findRodneCislo = line.find(rodneCislo)
             if findRodneCislo != -1:
-                currentClientInfo = line
-                currentClientLine = i+1 #poradove cislo riadka s current clientom (nepocita sa do toho aj prvy riadok suboru s poctom riadkov)
-    print(currentClientInfo)
-    print(currentClientLine)
+                cCInfo = line
+                cCLine = i+1 #poradove cislo riadka s current clientom (nepocita sa do toho aj prvy riadok suboru s poctom riadkov)
+    #print(cCInfo)
+    #print(cCLine)
+    poz = cCInfo.find(';')
+    cCId = cCInfo[:poz]
     fileKlienti.close()
-    
-##    fileKarty = open('karty.txt', 'r')
-##    karty = ['kartyId', 'kartyVydavatel', 'kartyTyp', 'kartyCislo', 'kartyPlatnost', 'kartyCvv', 'kartyIdUctu', 'kartyDlzna', 'kartyBlokovana']
-##    line = fileKarty.readline().strip()
-##    for i in range (int(line)):
-##        line = fileKarty.readline().strip()
-##        for a in range(len(karty)-1):
-##            poz = line.find(';')
-##            print(poz)
-##            karty[a] = line[:poz]
-##            line = line[poz+1:]
-##        karty[-1] = line[:]
-##    fileKarty.close()
 
-    
-    #fileUcty = open('ucty.txt', 'a')
-    #fileUcty.close() 
+
+    ##### ucty.txt
+    fileUcty = open('ucty.txt', 'r', encoding='utf-8')
+    linesQuantity = fileUcty.readline().strip()
+    for i in range(int(linesQuantity)):
+        line = fileUcty.readline().strip()
+        poz = line.find(';')
+        meta = line[poz+1:]
+        poz = meta.find(';')
+        if cCId == meta[:poz]:
+            cCAccountInfo = line 
+    poz = cCAccountInfo.find(';')
+    cCAccoundId = cCAccountInfo[:poz]
+    #print(cCAccountInfo)
+    fileUcty.close()
+
+
+    ##### karty.txt
+    cCCardQuantity = 0
+    cCCard = []
+    fileKarty = open('karty.txt', 'r')
+    linesQuantity = fileKarty.readline().strip()
+    for i in range(int(linesQuantity)):
+        line = fileKarty.readline().strip()
+        poz2 = line.rfind(';', 0, len(line)-2) #rfind('string', starting point, ending point)
+        meta = line[:poz2]
+        poz1 = meta.rfind(';')
+        if cCAccoundId == line[poz1+1:poz2]:
+            cCCardQuantity += 1
+            cCCard.append(line)
+    #print(cCCardQuantity, cCCard)
+
+
+    print('vybraty klient: ' + cCInfo)
+    print('vybraty ucet: ' + cCAccountInfo)
+    print('vybrate karty: ' + str(cCCardQuantity), cCCard)
 
 def handleReturn(event):
     print("return: event.widget is",event.widget)
