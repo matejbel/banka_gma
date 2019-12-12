@@ -79,17 +79,16 @@ imageDebet = tk.PhotoImage(file = 'obrazky/debet.png')
 imageKredit = tk.PhotoImage(file = 'obrazky/kredit.png')
 imageLogoBanky = tk.PhotoImage(file = 'obrazky/logobanky.png')
 
-##clients = ['--- vyberte klienta ---','Jano', 'Fero', 'Dominik']
-cardsList = ['--- vyberte kartu ---', 'SK506065320', 'SK35408540635', 'SK0468785343', 'and more...', 'SK506065320', 'SK35408540635', 'SK0468785343', 'and more...']
+cardsList = ['--- vyberte kartu ---'] #['--- vyberte kartu ---', 'SK506065320', 'SK35408540635', 'SK0468785343', 'and more...', 'SK506065320', 'SK35408540635', 'SK0468785343', 'and more...']
 
 clientName = currentClient
-datum_vytvorenia = '20/11/2018'
-vydavatel = 'Visa'
-cislo_karty = ''
-datum_platnosti = '06/22'
-id_uctu = '6650D2Br549q'
-dlzna_suma = '0'
-blokovana = '0'
+##datum_vytvorenia = '20/11/2018'
+##vydavatel = 'Visa'
+##cislo_karty = ''
+##datum_platnosti = '06/22'
+##id_uctu = '6650D2Br549q'
+##dlzna_suma = '0'
+##blokovana = '0'
 
 ########## def
 
@@ -233,7 +232,7 @@ def application():
     createCardButton.pack()
     createCardButton.place(x = w-borders*2, y = h-borders*2, anchor = 'se')
 
-    displayCard(cardsList[0]) ## musi zostat pred comboCards!
+    fileInfo(currentClient, "761201/1234") # treba nahradit rodnym cislom
     ## comboBox pre ucty klienta
     comboCards = ttk.Combobox(font = fontWidget + (fontSizeSmall,) + (fontStyleNone,), values = cardsList, width = 30, state='readonly', justify = 'center')
     comboCards.current(0)
@@ -262,10 +261,13 @@ def blockCard():
     global blockCardButton, blokovana
     if blockCardButton['text'] == 'blokovať kartu':
         blockCardButton.config(text = 'odblokovať kartu')
+        blokovana = 1
         #notificLine = c.create_text(borders*2, 500, text='Karta bola zablokovaná', font='50', anchor = 'w')  # na to by trebalo vacsiu upravu
         #c.after(1000, application)
     elif blockCardButton['text'] == 'odblokovať kartu':
         blockCardButton.config(text = 'blokovať kartu')
+        blokovana = 0
+    displayCard(cardsList[comboCards.current()])
         
 def displayCard(cislo_karty):
     global clientName, vydavatel, datum_platnosti, id_uctu, dlzna_suma, blokovana, datum_vytvorenia, lineCislo_karty, lineClientName, lineDatum_vytvorenia, lineDatum_platnosti, lineDlzna_suma, lineBlokovana
@@ -277,13 +279,25 @@ def displayCard(cislo_karty):
     lineDatum_platnosti =  c.create_text(borders*2, h//3 + borders*7, text= f'Datum platnosti: {datum_platnosti}', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'w')
     lineDlzna_suma =       c.create_text(borders*2, h//3 + borders*9, text= f'Dlzna suma: {dlzna_suma}$', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'w')
     if blokovana == '0':
+        print('block')
         lineBlokovana =    c.create_text(borders*2, h//3 + borders*11, text='Stav: aktívna', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'w')
     elif blokovana == '1':
+        print('unblock')
         lineBlokovana =    c.create_text(borders*2, h//3 + borders*11, text='Stav: blokovaná', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'w')
 
 def chosenCard(useless):
-    ##bez toho argumentu to nefunguje.. kvoli tomu ze sa to vola v c.bind  a tam je vzdy dany pozicny argument
-    
+    global clientName, vydavatel, datum_platnosti, id_uctu, dlzna_suma, blokovana, datum_vytvorenia, lineCislo_karty, lineClientName, lineDatum_vytvorenia, lineDatum_platnosti, lineDlzna_suma, lineBlokovana
+    currentCard = cardsList[comboCards.current()]
+    print(currentCard)
+    datum_vytvorenia = '20/11/2018'
+    vydavatel = 'Visa'
+    cislo_karty = ''
+    datum_platnosti = '06/22'
+    id_uctu = '6650D2Br549q'
+    dlzna_suma = '0'
+    blokovana = cCCardInfo[8+9]
+    print(type(blokovana), blokovana)
+
     displayCard(cardsList[comboCards.current()])
  
 def deleteCard():
@@ -310,11 +324,12 @@ def changeClient():
     chooseClientScreen()
 
 def fileInfo(currentClient, rodneCislo):
-    ##### klienti.txt
+    global cardsList, cCInfo, cCAccountId, cCCardInfo, cCCardQuantity
+    ##### klienti
     cC = currentClient
     cC = cC.split()
     cC = cC[0] + ';' + cC[1]
-    fileKlienti = open('klienti.txt', 'r', encoding='utf-8')
+    fileKlienti = open('KLIENTI.txt', 'r', encoding='utf-8')
     linesQuantity = fileKlienti.readline().strip()
     for i in range(int(linesQuantity)):
         line = fileKlienti.readline().strip()
@@ -322,17 +337,13 @@ def fileInfo(currentClient, rodneCislo):
         if findName != -1:
             findRodneCislo = line.find(rodneCislo)
             if findRodneCislo != -1:
-                cCInfo = line
+                cCInfo = line.split(";")
                 cCLine = i+1 #poradove cislo riadka s current clientom (nepocita sa do toho aj prvy riadok suboru s poctom riadkov)
-    #print(cCInfo)
-    #print(cCLine)
-    poz = cCInfo.find(';')
-    cCId = cCInfo[:poz]
+    cCId = cCInfo[0]
     fileKlienti.close()
 
-
-    ##### ucty.txt
-    fileUcty = open('ucty.txt', 'r', encoding='utf-8')
+    ##### ucty
+    fileUcty = open('UCTY.txt', 'r', encoding='utf-8')
     linesQuantity = fileUcty.readline().strip()
     for i in range(int(linesQuantity)):
         line = fileUcty.readline().strip()
@@ -340,32 +351,33 @@ def fileInfo(currentClient, rodneCislo):
         meta = line[poz+1:]
         poz = meta.find(';')
         if cCId == meta[:poz]:
-            cCAccountInfo = line 
-    poz = cCAccountInfo.find(';')
-    cCAccoundId = cCAccountInfo[:poz]
-    #print(cCAccountInfo)
+            cCAccountInfo = line.split(";")
+    cCAccountId = cCAccountInfo[0]
     fileUcty.close()
 
-
-    ##### karty.txt
+    ##### karty
     cCCardQuantity = 0
-    cCCard = []
-    fileKarty = open('karty.txt', 'r')
+    cCCardInfo = []
+    fileKarty = open('KARTY.txt', 'r')
     linesQuantity = fileKarty.readline().strip()
     for i in range(int(linesQuantity)):
         line = fileKarty.readline().strip()
-        poz2 = line.rfind(';', 0, len(line)-2) #rfind('string', starting point, ending point)
+        poz2 = line.rfind(';', 0, len(line)-2) #rfind('string', starting point, ending point) hlada od konca str
         meta = line[:poz2]
         poz1 = meta.rfind(';')
-        if cCAccoundId == line[poz1+1:poz2]:
+        if cCAccountId == line[poz1+1:poz2]:
             cCCardQuantity += 1
-            cCCard.append(line)
-    #print(cCCardQuantity, cCCard)
+            cCCardInfo += line.split(';')
 
+    print('vybraty klient: ' + str(cCInfo))
+    print('vybraty ucet: ' + str(cCAccountInfo))
+    print('karty k dispozicii: ' + str(cCCardQuantity), cCCardInfo)
 
-    print('vybraty klient: ' + cCInfo)
-    print('vybraty ucet: ' + cCAccountInfo)
-    print('vybrate karty: ' + str(cCCardQuantity), cCCard)
+    cardsList = ['--- vyberte kartu ---']
+    meta = cCCardInfo[3::9] #od 3. itemu az po koniec, ale iba kazdych 9 itemov
+    for i in range(len(meta)):
+        cardsList.append(meta[i])
+    
 
 def handleReturn(event):
     print("return: event.widget is",event.widget)
