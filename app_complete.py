@@ -1,13 +1,11 @@
 '''
-miesto rollboxu na klienta spravit search engine
-miesto 2 tlacidiel odblokovat a zablokovat spravit jedno, ktore bude menit stav
+to do:
+
+uprav prosim ten button blokovania karty, lebo teraz ak jednu zablokujem a prekliknem na druhu tak aj ta je zabokovana
 pridat do comboboxu klienti rodne cisla
-rodne cislo ako 'heslo'
 '''
 
 ##########zide sa na neskor
-
-#spravit ako definiciu so vstupnymi hodnotami ako id_uctu, cislo_uctu, .... vsetky info
 
 #spravit scrollbar ked bude mat viac kariet ako sa zmesti
 
@@ -60,7 +58,7 @@ c.grid(sticky='s')
 
 users = {'kubo': 'ok', 'mato':'matojefrajer'} ##mena a hesla na prihlasovanie -- neskor by bolo dobre aby sme to dali do nejakej databazy v subore alebo co
 users.update({'' : ''}) ## toto vzdy odkomentuj aby si nemusel stale pri spustani zadavat login
-clients = ['Jano Mrkva','Maroš Klamár', 'Jano Stolný']
+clients = ['Jano Mrkva','Maroš Klamár', 'Jano Stolný','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva',]
 ##clients = {'Jano':'Mrkva', 'Maroš' :'Klamár', 'Jano':'Stolný'}
 foundClients = []
 
@@ -168,12 +166,17 @@ def chooseClientScreen():
 ##    comboClients = ttk.Combobox(font = fontWidget + (fontSizeSmall,) + (fontStyleNone,), values = foundClients, width = 30, state='readonly', justify = 'center')
 ##    comboClients.pack()
 ##    comboClients.place(x = w/2, y = h/2-borders*3, anchor='c')
-
-
+    
+    scrollbar = tk.Scrollbar()
+    scrollbar.pack()
+    scrollbar.place(x=w/2+12*borders,y=h/8*5, height=300, width=20,anchor='c')
+    
     listboxClients = tk.Listbox(borderwidth = 10,activestyle='underline',cursor='hand2',height = 8,selectbackground=backgroundColor,width=50,font = fontWidget + (fontSizeMedium,) + (fontStyleNone,))
     listboxClients.pack()
-    listboxClients.place(x = w/2, y = h/8*5, anchor='c')
+    listboxClients.place(x = w/2-borders*8, y = h/8*5, anchor='c')
     listboxClients.bind("<<ListboxSelect>>", chosenClient)
+    listboxClients.config(yscrollcommand=scrollbar.set)
+    scrollbar.config(command=listboxClients.yview)
 
     chosenClientButton = tk.Button(command = clientIsChosen, width = 10, bg=colorElement, activebackground = colorElement, foreground = backgroundColor, text = 'zvoliť', cursor='hand2', font = fontWidget + (fontSizeMedium,) + (fontBold,))
     chosenClientButton.pack()
