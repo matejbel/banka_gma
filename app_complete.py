@@ -1,13 +1,5 @@
-'''
-to do:
-
-uprav prosim ten button blokovania karty, lebo teraz ak jednu zablokujem a prekliknem na druhu tak aj ta je zabokovana
-pridat do comboboxu klienti rodne cisla
-'''
-
 ##########zide sa na neskor
 
-#spravit scrollbar ked bude mat viac kariet ako sa zmesti
 
 ##totok sa pouzije na to, aby sme checkovali, ci akurat niekto zapisuje do suboru
 ##for path, directories, files in os.walk('banka_gma'):
@@ -27,7 +19,7 @@ pridat do comboboxu klienti rodne cisla
 ##
 ##c.tag_bind('rectClick','<Button-1>', cardsClick)
 
-import tkinter as tk, os.path
+import tkinter as tk, os, unicodedata
 from tkinter import ttk, messagebox
 import datetime
 w = 1280
@@ -56,14 +48,15 @@ c.grid(sticky='s')
 
 ########## variables
 
-users = {'kubo': 'ok', 'mato':'matojefrajer'} ##mena a hesla na prihlasovanie -- neskor by bolo dobre aby sme to dali do nejakej databazy v subore alebo co
-users.update({'' : ''}) ## toto vzdy odkomentuj aby si nemusel stale pri spustani zadavat login
-clients = ['Jano Mrkva','Maroš Klamár', 'Jano Stolný','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva',]
-##clients = {'Jano':'Mrkva', 'Maroš' :'Klamár', 'Jano':'Stolný'}
+users = {}
+clients = []
+clientsIN = []
+##clients = ['Jano Mrkva','Maroš Klamár', 'Jano Stolný','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva',]
 foundClients = []
 
 
 currentClient = ''
+currentIN = ''
 
 
 lineCislo_karty = zvolKlienta = incorrectNameOrPassword = lineClientName = lineDatum_vytvorenia = timeShow = lineDatum_platnosti = lineDlzna_suma = lineBlokovana = incorrectNameOrPassword =lineVydavatel= ''
@@ -79,14 +72,7 @@ imageLogoBanky = tk.PhotoImage(file = 'obrazky/logobanky.png')
 
 cardsList = ['--- vyberte kartu ---'] #['--- vyberte kartu ---', 'SK506065320', 'SK35408540635', 'SK0468785343', 'and more...', 'SK506065320', 'SK35408540635', 'SK0468785343', 'and more...']
 
-##clientName = currentClient
-##datum_vytvorenia = '20/11/2018'
-##vydavatel = 'Visa'
-##cislo_karty = ''
-##datum_platnosti = '06/22'
-##id_uctu = '6650D2Br549q'
-##dlzna_suma = '0'
-##blokovana = '0'
+
 
 ########## def
 
@@ -97,9 +83,6 @@ def essentialLook():
 def timeNow():
     global timeShow
     c.delete(timeShow)
-    logoutButton = tk.Button(command = logout, width = 10, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'odhlásiť',cursor='hand2',font = fontWidget + (fontSizeMedium,) + (fontBold,))
-    #logoutButton.pack()
-    logoutButton.place(x = w-borders*2, y = (borders*5+widthLines/2)/2, anchor='e')
     now = datetime.datetime.now()
     now = now.strftime("%d. %m. %Y %H:%M:%S")
     timeShow = c.create_text(borders*2, (borders*5+widthLines/2)/2, anchor = 'w', text = f'Dobrý deň. Aktuálny dátum a čas našej banky: {now}', fill=colorElement,font = fontMain + (fontSizeMedium,) + (fontStyleNone,))
@@ -119,11 +102,49 @@ def loginAuthentication():
         c.delete(incorrectNameOrPassword)
         incorrectNameOrPassword = c.create_text(w//4*3-borders, h//10*8-borders, text = 'nesprávne meno alebo heslo!', fill = colorElement, font = fontMain + (fontSizeBig,) + (fontItalic,))
 
+def loadEmployees():
+    global newUser
+    if os.path.exists("ZAMESTNANCI_LOCK.txt"):
+        print('there is a lock file')
+        c.after(2000,loadEmployees)
+    else:
+        zamestnanciLockSubor = open("ZAMESTNANCI_LOCK.txt","w+")   
+        zamestnanciSubor = open("ZAMESTNANCI.txt","r+")               
+        linesQuantity = int(zamestnanciSubor.readline().strip())
+        for i in range(linesQuantity):
+            newUser = zamestnanciSubor.readline().strip().split(';')
+            users.update({newUser[0]:newUser[1]})
+        zamestnanciLockSubor.close()
+        zamestnanciSubor.close()
+        os.remove("ZAMESTNANCI_LOCK.txt")
+
+
+def loadClients():
+    if os.path.exists("KLIENTI_LOCK.txt"):
+        print('there is a lock file')
+        c.after(2000,loadClients)
+    else:
+        klientiLockSubor = open("KLIENTI_LOCK.txt","w+")   
+        klientiSubor = open("KLIENTI.txt","r+")               
+        linesQuantity = int(klientiSubor.readline().strip())
+        for i in range(linesQuantity):
+            newClient = klientiSubor.readline().strip().split(';')
+            clients.append(f'{newClient[1]} {newClient[2]}')
+            clientsIN.append(newClient[3])
+        klientiSubor.close()
+        klientiLockSubor.close()
+        os.remove("KLIENTI_LOCK.txt")    
+
+
+        
+
 def loginScreen():
     global entryName, entryPassword
     essentialLook()
     vertLine = c.create_line(w//2, borders*5, w//2, h, width = widthLines, fill = colorElement)
 
+    loadEmployees()
+    loadClients()
     
     c.create_text(w - borders, borders*2 , anchor = 'se', text = verzia, fill=colorElement,font = fontMain + (fontSizeSmall,) + (fontItalic,))
 
@@ -157,6 +178,9 @@ def chooseClientScreen():
     c.create_text(w - borders, borders*2 , anchor = 'se', text = verzia, fill=colorElement,font = fontMain + (fontSizeSmall,) + (fontItalic,))
     c.create_text(w/10*3+borders, h/4, text = 'Vyhľadanie klienta', font = fontMain + (fontSizeBig,) + (fontStyleNone,),fill=colorElement, anchor='e')
     timeNow()
+
+    logoutButton = tk.Button(command = logout, width = 10, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'odhlásiť',cursor='hand2',font = fontWidget + (fontSizeMedium,) + (fontBold,))
+    logoutButton.place(x = w-borders*2, y = (borders*5+widthLines/2)/2, anchor='e')
     
     searchEngineEntry = tk.Entry(font = fontWidget + (fontSizeMedium,) + (fontStyleNone,), foreground = colorElement,insertbackground=colorElement)
     searchEngineEntry.pack()
@@ -235,7 +259,7 @@ def application():
     createCardButton.pack()
     createCardButton.place(x = w-borders*2, y = h-borders*2, anchor = 'se')
     
-    fileInfo(currentClient, "761201/1234") # treba nahradit rodnym cislom
+    fileInfo(currentClient, currentIN) 
     ## comboBox pre ucty klienta
     comboCards = ttk.Combobox(font = fontWidget + (fontSizeSmall,) + (fontStyleNone,), values = cardsList, width = 30, state='readonly', justify = 'center')
     comboCards.current(0)
@@ -254,7 +278,7 @@ def application():
     logoutButton = tk.Button(command = logout, width = 10, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'odhlásiť',cursor='hand2',font = fontWidget + (fontSizeMedium,) + (fontBold,))
     logoutButton.pack()
     logoutButton.place(x = w-borders*2, y = (borders*5+widthLines/2)/2, anchor='e')
-
+    
     changeClientButton = tk.Button(command = changeClient, width = 15, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'zmeniť klienta',cursor='hand2',font = fontWidget + (fontSizeMedium,) + (fontBold,))
     changeClientButton.pack()
     changeClientButton.place(x = w-borders*14, y = (borders*5+widthLines/2)/2, anchor='e')
@@ -368,19 +392,21 @@ def changeClient():
     c.pack()
     chooseClientScreen()
 
-def fileInfo(currentClient, rodneCislo):
+def fileInfo(currentClient, currentIN):
     global cardsList, cCInfo, cCAccountId, cCCardInfo, cCCardQuantity
     ##### klienti
     cC = currentClient
     print(cC)
     cC = cC.split()
     #cC = cC[0] + ';' + cC[1]
-    fileKlienti = open('KLIENTI.txt', 'r', encoding='utf-8')
+##    fileKlienti = open('KLIENTI.txt', 'r', encoding='utf-8')
+    fileKlienti = open('KLIENTI.txt', 'r')
     linesQuantity = fileKlienti.readline().strip()
+    print(linesQuantity)
     for i in range(int(linesQuantity)):
         line = fileKlienti.readline().strip().split(';')
         if line[1] == cC[0] and line[2] == cC[1]:
-            if line[3] == rodneCislo:
+            if line[3] == currentIN:
                 cCInfo = line
                 cCLine = i+1 #poradove cislo riadka s current clientom (nepocita sa do toho aj prvy riadok suboru s poctom riadkov)
     cCId = cCInfo[0]
@@ -421,23 +447,39 @@ def handleReturn(event):
     print("return: event.widget is",event.widget)
     print("focus is:",c.focus_get())
 
+def remove_accents(inputString):
+    nfkd_form = unicodedata.normalize('NFKD', inputString)
+    return u"".join([c for c in nfkd_form if not unicodedata.combining(c)])
+
 def searchClient():
     global foundClients
+    d = 0
     foundClients = []
     listboxClients.delete(0, 'end')
     searchName = searchEngineEntry.get()
     for cl in clients:
         cl = cl.lower().split()
-        for i in range(len(cl)):
-            if cl[i] == searchName.lower():
+        for i in range(len(cl)): 
+            if cl[i] == searchName.lower() or remove_accents(cl[i])==searchName.lower():
+                cl = [d.title() for d in cl]
+                nameLength = sum(len(i) for i in cl)
+                spaces = (25-nameLength)* '₋' 
+                cl.append(spaces)
+                cl.append(clientsIN[d])
                 foundClients.append(cl)
+        d+=1
     for item in foundClients:
         listboxClients.insert('end', item)
 
 def chosenClient(useless):
-    global currentClient
+    global currentClient, currentIN
     currentClient = ''
     currentClient = " ".join(listboxClients.get('active')).title()
+    meta = currentClient.find('₋')
+    meta2 = currentClient.rfind('₋')
+    currentIN = currentClient[meta2+2:]
+    currentClient = currentClient[0:meta-1]
+    print(currentIN)
     print(currentClient)
 
 
