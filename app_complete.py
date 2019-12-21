@@ -399,39 +399,60 @@ def fileInfo(currentClient, currentIN):
     print(cC)
     cC = cC.split()
     #cC = cC[0] + ';' + cC[1]
-##    fileKlienti = open('KLIENTI.txt', 'r', encoding='utf-8')
-    fileKlienti = open('KLIENTI.txt', 'r')
-    linesQuantity = fileKlienti.readline().strip()
-    print(linesQuantity)
-    for i in range(int(linesQuantity)):
-        line = fileKlienti.readline().strip().split(';')
-        if line[1] == cC[0] and line[2] == cC[1]:
-            if line[3] == currentIN:
-                cCInfo = line
-                cCLine = i+1 #poradove cislo riadka s current clientom (nepocita sa do toho aj prvy riadok suboru s poctom riadkov)
-    cCId = cCInfo[0]
-    fileKlienti.close()
-
+##    klientiSubor = open('KLIENTI.txt', 'r', encoding='utf-8')
+    if os.path.exists("KLIENTI_LOCK.txt"):
+        print('there is a lock file')
+        c.after(2000,fileInfo(currentClient, currentIN))
+    else:
+        klientiLockSubor = open("KLIENTI_LOCK.txt","w+")   
+        klientiSubor = open("KLIENTI.txt","r+")               
+        linesQuantity = klientiSubor.readline().strip()
+        print(linesQuantity)
+        for i in range(int(linesQuantity)):
+            line = klientiSubor.readline().strip().split(';')
+            if line[1] == cC[0] and line[2] == cC[1]:
+                if line[3] == currentIN:
+                    cCInfo = line
+                    cCLine = i+1 #poradove cislo riadka s current clientom (nepocita sa do toho aj prvy riadok suboru s poctom riadkov)
+        cCId = cCInfo[0]
+        klientiLockSubor.close()
+        klientiSubor.close()
+        os.remove("KLIENTI_LOCK.txt")
     ##### ucty
-    fileUcty = open('UCTY.txt', 'r', encoding='utf-8')
-    linesQuantity = fileUcty.readline().strip()
-    for i in range(int(linesQuantity)):
-        line = fileUcty.readline().strip().split(';')
-        if cCId == line[1]:
-            cCAccountInfo = line
-    cCAccountId = cCAccountInfo[0]
-    fileUcty.close()
+    if os.path.exists("UCTY_LOCK.txt"):
+        print('there is a lock file')
+        c.after(2000,fileInfo(currentClient, currentIN))
+    else:
+        uctyLockSubor = open("UCTY_LOCK.txt","w+")   
+        uctySubor = open("UCTY.txt","r+")               
+        linesQuantity = uctySubor.readline().strip()
+        for i in range(int(linesQuantity)):
+            line = uctySubor.readline().strip().split(';')
+            if cCId == line[1]:
+                cCAccountInfo = line
+        cCAccountId = cCAccountInfo[0]
+        uctySubor.close()
+        uctyLockSubor.close()
+        os.remove("UCTY_LOCK.txt")
 
     ##### karty
     cCCardQuantity = 0
     cCCardInfo = []
-    fileKarty = open('KARTY.txt', 'r')
-    linesQuantity = fileKarty.readline().strip()
-    for i in range(int(linesQuantity)):
-        line = fileKarty.readline().strip().split(';')
-        if cCAccountId == line[-5]:
-            cCCardQuantity += 1
-            cCCardInfo += line
+    if os.path.exists("KARTY_LOCK.txt"):
+        print('there is a lock file')
+        c.after(2000,fileInfo(currentClient, currentIN))
+    else:
+        kartyLockSubor = open("KARTY_LOCK.txt","w+")   
+        kartySubor = open("KARTY.txt","r+")
+        linesQuantity = kartySubor.readline().strip()
+        for i in range(int(linesQuantity)):
+            line = kartySubor.readline().strip().split(';')
+            if cCAccountId == line[-5]:
+                cCCardQuantity += 1
+                cCCardInfo += line
+            kartyLockSubor.close()
+            kartySubor.close()
+            os.remove("KARTY_LOCK.txt")
 
     print('vybraty klient: ' + str(cCInfo))
     print('vybraty ucet: ' + str(cCAccountInfo))
