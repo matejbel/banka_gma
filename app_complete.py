@@ -360,6 +360,10 @@ def chosenCard(useless):
     poradie = comboCards.current()-1
     datum_vytvorenia = cCCardInfo[9+poradie*11]
     vydavatel = cCCardInfo[1+poradie*11]
+    if vydavatel == 'V':
+        vydavatel = 'Visa'
+    else:
+        vydavatel = 'MasterCard'
     cislo_karty = ''
     datum_platnosti = cCCardInfo[4+poradie*11]
     id_uctu = '6650D2Br549q'
@@ -450,9 +454,9 @@ def fileInfo(currentClient, currentIN):
             if cCAccountId == line[-5]:
                 cCCardQuantity += 1
                 cCCardInfo += line
-            kartyLockSubor.close()
-            kartySubor.close()
-            os.remove("KARTY_LOCK.txt")
+        kartyLockSubor.close()
+        kartySubor.close()
+        os.remove("KARTY_LOCK.txt")
 
     print('vybraty klient: ' + str(cCInfo))
     print('vybraty ucet: ' + str(cCAccountInfo))
