@@ -21,6 +21,7 @@
 
 import tkinter as tk, os, unicodedata
 from tkinter import ttk, messagebox
+from random import *
 import datetime
 w = 1280
 h = 720
@@ -185,6 +186,10 @@ def chooseClientScreen():
     searchEngineEntry = tk.Entry(font = fontWidget + (fontSizeMedium,) + (fontStyleNone,), foreground = colorElement,insertbackground=colorElement)
     searchEngineEntry.pack()
     searchEngineEntry.place(x = w//2, y = h/4, anchor='c')
+    
+
+    searchEngineEntry.insert(0,'jano') ##vymazat potom
+    
 
     searchEngineButton = tk.Button(command = searchClient, width = 15, bg=colorElement, activebackground = colorElement, foreground = backgroundColor, text = 'hľadať', cursor='hand2', font = fontWidget + (fontSizeMedium,) + (fontBold,))
     searchEngineButton.pack()
@@ -211,7 +216,7 @@ def chooseClientScreen():
 
 
 def application():
-    global comboCards,searchEngineEntry,c,blockCardButton
+    global comboCards,searchEngineEntry,c,blockCardButton,limitEntry
     c.destroy()
     c = tk.Canvas(width = w, height = h, bg = backgroundColor, cursor = 'arrow')
     c.pack()
@@ -239,7 +244,7 @@ def application():
     radioButtonVisa.pack()
     radioButtonVisa.place(x = w//8*5 + widthLines, y = h//2, anchor = 's')
 
-    radioButtonMastercard = tk.Radiobutton(indicatoron='false',selectcolor=colorElement,highlightthickness=20,activebackground=colorElement,bg = backgroundColor, cursor='hand2',image = imageMastercard,variable = visaMastercard,value =2)
+    radioButtonMastercard = tk.Radiobutton(indicatoron='false',selectcolor=colorElement,highlightthickness=20,activebackground=colorElement,bg = backgroundColor, cursor='hand2',image = imageMastercard,variable = visaMastercard,value = 2)
     radioButtonMastercard.pack()
     radioButtonMastercard.place(x = w//8*7 - widthLines, y = h//2, anchor = 's')
 
@@ -255,7 +260,7 @@ def application():
     limitEntry.pack()
     limitEntry.place(x = w//2 + borders*2 - widthLines/2, y = h-borders*2, anchor='sw')
 
-    createCardButton = tk.Button(bg=colorElement, width = 12, activebackground = colorElement,foreground = backgroundColor,text = 'vytvoriť kartu',cursor='hand2',font = fontWidget + (fontSizeMedium,) + (fontBold,))
+    createCardButton = tk.Button(bg=colorElement, width = 12, command = createCard, activebackground = colorElement,foreground = backgroundColor,text = 'vytvoriť kartu',cursor='hand2',font = fontWidget + (fontSizeMedium,) + (fontBold,))
     createCardButton.pack()
     createCardButton.place(x = w-borders*2, y = h-borders*2, anchor = 'se')
     
@@ -383,6 +388,7 @@ def chosenCard(useless):  ## treba pridat nacitavanie info o karte, aby tam boli
         displayCard(cardsList[comboCards.current()])
  
 def deleteCard():
+    ##ak je zvolena - tak toto a ak nie je, nech to hodi oznamenie ze najprv zvolte kartu
     messageBox = messagebox.askquestion("vymazať kartu", "Naozaj chcete vymazať kartu?", icon='warning')
     if messageBox == 'yes':
         print ("karta bola vymazaná")
@@ -406,7 +412,7 @@ def changeClient():
     chooseClientScreen()
 
 def fileInfo(currentClient, currentIN):
-    global cardsList, cCInfo, cCAccountId, cCCardInfo, cCCardQuantity
+    global cardsList, cCInfo, cCAccountId, cCCardInfo, cCCardQuantity, cCAccountInfo,cCId
     ##### klienti
     cC = currentClient
     print(cC)
@@ -526,8 +532,53 @@ def clientIsChosen():
     else:
         zvolKlienta = c.create_text(w/2,h/2-90,text = 'Najprv zvoľte klienta!',fill=colorElement,font = fontMain + (fontSizeMedium,) + (fontStyleNone,))
 
+def random_with_N_digits(n):
+    range_start = 10**(n-1)
+    range_end = (10**n)-1
+    return randint(range_start, range_end)
 
 
+def createCard():
+    if os.path.exists("KARTY_LOCK.txt"):
+        print('there is a lock file')
+        c.after(2000,createCard)
+    else:
+        cardLimit = limitEntry.get()
+        if cardLimit.lstrip('+-').isdigit():
+            if float(cardLimit) >= 0:
+                if visaMastercard.get() != 0 and debetKredit.get() != 0:
+                    if visaMastercard.get() == 1:
+                        visaMasterCardBinary = 'V'
+                    elif visaMastercard.get() == 2:
+                        visaMasterCardBinary = 'M'
+                    if debetKredit.get() == 1:
+                        debetKreditBinary = 'D'
+                    elif debetKredit.get() == 2:
+                        debetKreditBinary = 'K'
+                    todayDate = datetime.datetime.now()
+                    todayDate = todayDate.strftime('%d%m%Y')
+                    newCardNumber = random_with_N_digits(16)
+                    newCardDate = random_with_N_digits(4)
+                    newCardCVV = random_with_N_digits(3)
+                    kartyLockSubor = open("KARTY_LOCK.txt","w+")   
+                    kartySubor = open("KARTY.txt","r+")
+                    wholeFile = kartySubor.read()
+                    newCardInfo = f'{str(int(wholeFile[0]) + 1)};{visaMasterCardBinary};{debetKreditBinary};{newCardNumber};{newCardDate};{newCardCVV};{cCId};0;0;{todayDate};{cardLimit}'
+                    wholeFile = f'{str(int(wholeFile[0]) + 1)}{wholeFile[1:]}\n{newCardInfo}'
+                    kartySubor.close()
+                    os.remove("KARTY.txt")
+                    kartySubor = open("KARTY.txt","w+")
+                    kartySubor.write(wholeFile)
+                    kartyLockSubor.close()
+                    kartySubor.close()
+                    os.remove("KARTY_LOCK.txt")
+                else:
+                    cardTypeMessageBox = messagebox.showinfo('Druh', 'Najprv zvoľte typ a vydavateľa karty')    
+        else:
+            limitMessageBox = messagebox.showinfo('Limit', 'Limit prečerpania musí byť kladné číslo')
+
+
+         
 
 
 loginScreen()
