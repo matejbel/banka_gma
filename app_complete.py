@@ -572,13 +572,17 @@ def createCard():
                     kartyLockSubor.close()
                     kartySubor.close()
                     os.remove("KARTY_LOCK.txt")
+                    limitMessageBox = messagebox.showinfo('Hotovo', 'Karta bola úspešne vytvorená')
+
                 else:
                     cardTypeMessageBox = messagebox.showinfo('Druh', 'Najprv zvoľte typ a vydavateľa karty')    
         else:
             limitMessageBox = messagebox.showinfo('Limit', 'Limit prečerpania musí byť kladné číslo')
 
 
-         
+##def removeCard():
+    
+    
 
 
 loginScreen()
