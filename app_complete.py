@@ -1,18 +1,13 @@
+'''
+need 2 get done: ked vytvorim kartu, aby sa updatol combobox + rovno sa selectla
+                 ked vymazen kartu, nech sa updatne combobox
+'''
+
+
 ##########zide sa na neskor
-
-
-##totok sa pouzije na to, aby sme checkovali, ci akurat niekto zapisuje do suboru
-##for path, directories, files in os.walk('banka_gma'):
-##     if 'app_complete.py' in files:
-##          print ('found %s' % os.path.join(path, 'debet.png'))
-
-##vlozene = limitEntry.get() #takto zaistime aby vzdy vlozena hodnota bola len cislo
-##if vlozene.isdigit()... else print vlozte cislo
-
-##radiobutton option --- command = A procedure to be called every time the user changes the state of this radiobutton.
-
+##
 ##print(dict(comboUcet))
-
+##
 ##for card in range(cardsList):
 ##    rect = c.create_rectangle(borders*2, cardsY, w//2-borders, cardsY + cardsHeight, fill = colorElement, activefill='gray', tags='rectClick')
 ##    cardsY += cardsHeight + borders
@@ -52,7 +47,6 @@ c.grid(sticky='s')
 users = {}
 clients = []
 clientsIN = []
-##clients = ['Jano Mrkva','Maroš Klamár', 'Jano Stolný','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva','Jano Mrkva',]
 foundClients = []
 
 
@@ -100,8 +94,11 @@ def loginAuthentication():
         c.pack()
         chooseClientScreen()
     else:
-        c.delete(incorrectNameOrPassword)
-        incorrectNameOrPassword = c.create_text(w//4*3-borders, h//10*8-borders, text = 'nesprávne meno alebo heslo!', fill = colorElement, font = fontMain + (fontSizeBig,) + (fontItalic,))
+        wrongInsertMessageBox = messagebox.showinfo('Nesprávne meno alebo heslo.', 'Zadali ste nesprávne meno alebo heslo.')
+
+
+def loginAut(useless):
+    loginAuthentication()
 
 def loadEmployees():
     global newUser
@@ -154,7 +151,7 @@ def loginScreen():
     entryName = tk.Entry(c, font = fontWidget + (fontSizeBig,) + (fontStyleNone,), foreground = colorElement,insertbackground=colorElement)
     entryName.pack()
     entryName.place(x = w//2 + borders*2 - widthLines/2, y = h//10*4 + int(fontSizeBig)/2*3, anchor='w')
-##    entryName.bind("<Return>", loginAuthentication)
+    entryName.bind("<Return>", loginAut)
 
 ##    entryName.insert(0,'meno',font='Arial')
     
@@ -162,7 +159,7 @@ def loginScreen():
     entryPassword = tk.Entry(c, font = fontWidget + (fontSizeBig,) + (fontStyleNone,), foreground = colorElement,insertbackground=colorElement, show = '*')
     entryPassword.pack()
     entryPassword.place(x = w//2 + borders*2 - widthLines/2, y = h//10*6 + int(fontSizeBig)/2*3, anchor='w')
-##    entryPassword.bind("<Return>", loginAuthentication)
+    entryPassword.bind("<Return>", loginAut)
 
     logoBanky = tk.Label(master = c, image = imageLogoBanky, bg = backgroundColor)
     logoBanky.pack()
@@ -186,6 +183,7 @@ def chooseClientScreen():
     searchEngineEntry = tk.Entry(font = fontWidget + (fontSizeMedium,) + (fontStyleNone,), foreground = colorElement,insertbackground=colorElement)
     searchEngineEntry.pack()
     searchEngineEntry.place(x = w//2, y = h/4, anchor='c')
+    searchEngineEntry.bind("<Return>", searchCli)
     
 
     searchEngineEntry.insert(0,'jano') ##vymazat potom
@@ -253,6 +251,8 @@ def application():
     limitEntry = tk.Entry(font = fontWidget + (fontSizeMedium,) + (fontStyleNone,), foreground = colorElement,insertbackground=colorElement)
     limitEntry.pack()
     limitEntry.place(x = w//2 + borders*2 - widthLines/2, y = h-borders*2, anchor='sw')
+    limitEntry.bind("<Return>", createCa)
+
 
     createCardButton = tk.Button(bg=colorElement, width = 12, command = createCard, activebackground = colorElement,foreground = backgroundColor,text = 'vytvoriť kartu',cursor='hand2',font = fontWidget + (fontSizeMedium,) + (fontBold,))
     createCardButton.pack()
@@ -517,6 +517,11 @@ def searchClient():
     for item in foundClients:
         listboxClients.insert('end', item)
 
+
+def searchCli(useless):
+    searchClient()
+    
+
 def chosenClient(useless):
     global currentClient, currentIN
     currentClient = ''
@@ -592,6 +597,9 @@ def createCard():
         else:
             limitMessageBox = messagebox.showinfo('Limit', 'Limit prečerpania musí byť kladné číslo')
 
+
+def createCa(useless):
+    createCard()
 
 def removeCard():
     global currentCardCompleteInfo
