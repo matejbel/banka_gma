@@ -1,6 +1,7 @@
 '''
 need 2 get done: ked vytvorim kartu, aby sa updatol combobox + rovno sa selectla
                  ked vymazen kartu, nech sa updatne combobox
+                 pri blokovani a odblokovani tiez to updatnut
 '''
 
 
@@ -118,6 +119,7 @@ def loadEmployees():
 
 
 def loadClients():
+    clients.clear()
     if os.path.exists("KLIENTI_LOCK.txt"):
         print('there is a lock file')
         c.after(2000,loadClients)
@@ -186,7 +188,7 @@ def chooseClientScreen():
     searchEngineEntry.bind("<Return>", searchCli)
     
 
-    searchEngineEntry.insert(0,'jano') ##vymazat potom
+##    searchEngineEntry.insert(0,'jano') ##vymazat potom
     
 
     searchEngineButton = tk.Button(command = searchClient, width = 15, bg=colorElement, activebackground = colorElement, foreground = backgroundColor, text = 'hľadať', cursor='hand2', font = fontWidget + (fontSizeMedium,) + (fontBold,))
@@ -399,6 +401,10 @@ def logout():
     c.destroy()
     c = tk.Canvas(width = w, height = h, bg = backgroundColor, cursor = 'arrow')
     c.pack()
+##    foundClients.clear()
+##    listboxClients.delete(0, 'end')
+    print(listboxClients)
+    print(foundClients)
     loginScreen()
     limitMessageBox = messagebox.showinfo('Odhlásenie.', 'Úspešne ste sa odhlásili.')
     
@@ -409,6 +415,8 @@ def changeClient():
     c.destroy()
     c = tk.Canvas(width = w, height = h, bg = backgroundColor, cursor = 'arrow')
     c.pack()
+##    foundClients.clear()
+##    listboxClients.delete(0, 'end')
     chooseClientScreen()
 
 def fileInfo(currentClient, currentIN):
@@ -499,11 +507,11 @@ def searchClient():
     d = 0
     foundClients = []
     listboxClients.delete(0, 'end')
-    searchName = searchEngineEntry.get()
+    searchName = searchEngineEntry.get().lower()
     for cl in clients:
         cl = cl.lower().split()
         for i in range(len(cl)): 
-            if cl[i] == searchName.lower() or remove_accents(cl[i])==searchName.lower():
+            if cl[i] == searchName or remove_accents(cl[i]) == searchName:
                 cl = [d.title() for d in cl]
                 nameLength = sum(len(i) for i in cl)
                 spaces = (25-nameLength)* '₋' 
@@ -513,6 +521,9 @@ def searchClient():
         d+=1
     for item in foundClients:
         listboxClients.insert('end', item)
+    if len(foundClients) == 0:
+        messagebox.showinfo('Žiadna zhoda.', 'Žiaden človek s týmto menom nie je naším klientom.')
+
 
 
 def searchCli(useless):
@@ -522,12 +533,19 @@ def searchCli(useless):
 def chosenClient(useless):
     global currentClient, currentIN
     currentClient = ''
-    currentClient = " ".join(listboxClients.get('active')).title()
-    meta = currentClient.find('₋')
-    meta2 = currentClient.rfind('₋')
-    currentIN = currentClient[meta2+2:]
-    currentClient = currentClient[0:meta-1]
-##    print(f'{currentClient} {currentIN}')
+    try:
+        currentClient = " ".join(listboxClients.get(listboxClients.curselection())).title()
+        meta = currentClient.find('₋')
+        meta2 = currentClient.rfind('₋')
+        currentIN = currentClient[meta2+2:]
+        currentClient = currentClient[0:meta-1]
+    ##    print(f'{currentClient} {currentIN}')
+    except:
+        currentClient = " ".join(listboxClients.get('active')).title()
+        meta = currentClient.find('₋')
+        meta2 = currentClient.rfind('₋')
+        currentIN = currentClient[meta2+2:]
+        currentClient = currentClient[0:meta-1]
 
 
 
