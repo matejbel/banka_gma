@@ -1,7 +1,10 @@
 '''
-need 2 get done: ked vytvorim kartu, aby sa updatol combobox + rovno sa selectla
-                 ked vymazen kartu, nech sa updatne combobox
-                 pri blokovani a odblokovani tiez to updatnut
+need 2 get done: DONE ked vytvorim kartu, aby sa updatol combobox + rovno sa selectla
+                 DONE ked vymazen kartu, nech sa updatne combobox
+                 DONE pri blokovani a odblokovani tiez to updatnut
+                 zistit a opravit preco obcas pri vytvoreni karty vyhodi error
+                 predist tomu aby sa dal stlacit deleteButton/blockButton aj ked je vybrate " --- vyberte kartu --- "
+                 vychytat muchy a komarov, hlavne komarov lebo komarov fakt nemusim...
 '''
 
 
