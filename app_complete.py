@@ -333,7 +333,13 @@ def chosenCard(useless):  ## treba pridat nacitavanie info o karte, aby tam boli
             vydavatelCely = 'Visa'
         else:
             vydavatelCely = 'MasterCard'
-
+        
+        C1, C2, C3, C4 = cislo_karty[:4], cislo_karty[4:8], cislo_karty[8:12], cislo_karty[12:]
+        cislo_karty = f'{C1} {C2} {C3} {C4}'
+        MM, YY = datum_platnosti[:2], datum_platnosti[2:]
+        datum_platnosti = f'{MM}/{YY}'
+        DD, MM, YYYY = datum_vytvorenia[:2], datum_vytvorenia[2:4], datum_vytvorenia[4:]
+        datum_vytvorenia = f'{DD}/{MM}/{YYYY}'
         
         lineClientName =       c.create_text(borders*2, h//3 + borders*1, text= f'Meno klienta: {currentClient}', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'w')
         lineCislo_karty =      c.create_text(borders*2, h//3 + borders*3, text= f'Cislo karty: {cislo_karty}', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'w')
