@@ -300,29 +300,41 @@ def chosenCard(useless):  ## treba pridat nacitavanie info o karte, aby tam boli
     c.delete(lineCislo_karty, lineClientName, lineDatum_vytvorenia, lineDatum_platnosti, lineDlzna_suma, lineBlokovana, lineVydavatel)
     currentCard = cardsList[comboCards.current()]
     poradie = comboCards.current()-1
-    
+
+    blockCardButton = tk.Button(command = blockCard, width = 15, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'blokovať kartu',cursor='hand2',font = fontWidget + (fontSizeSmall,) + (fontItalic,))
+    blockCardButton.pack()
+    blockCardButton.place(x = w//2 - borders*2 + widthLines/2, y = h - borders*2, anchor = 'se')
+    deleteCardButton = tk.Button(command = deleteCard,width = 15, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'vymazať kartu',cursor='hand2',font = fontWidget + (fontSizeSmall,) + (fontItalic,))
+    deleteCardButton.pack()
+    deleteCardButton.place(x = w//2 - borders*2 + widthLines/2, y = h - borders*5, anchor = 'se')
+
     if poradie == -1:
-        None
+        #c.delete(blockCardButton, deleteCardButton)
+        blockCardButton.config(state='disabled', cursor = 'arrow')
+        deleteCardButton.config(state='disabled', cursor = 'arrow')
     else:
-        id_karty = cCCardInfo[poradie*11]
-        vydavatel = cCCardInfo[1+poradie*11]
-        if vydavatel == 'V':
-            vydavatelCely = 'Visa'
-        else:
-            vydavatelCely = 'MasterCard'
-        typKreditDebet = cCCardInfo[2+poradie*11]
-        cislo_karty = cCCardInfo[3+poradie*11]
-        datum_platnosti = cCCardInfo[4+poradie*11]
-        cvvKod = cCCardInfo[5+poradie*11]
-        id_uctu = cCCardInfo[6+poradie*11]
-        dlzna_suma = cCCardInfo[7+poradie*11]
-        blokovana = cCCardInfo[8+poradie*11]
+        id_karty =         cCCardInfo[poradie*11]
+        vydavatel =        cCCardInfo[1+poradie*11]
+        typKreditDebet =   cCCardInfo[2+poradie*11]
+        cislo_karty =      cCCardInfo[3+poradie*11]
+        datum_platnosti =  cCCardInfo[4+poradie*11]
+        cvvKod =           cCCardInfo[5+poradie*11]
+        id_uctu =          cCCardInfo[6+poradie*11]
+        dlzna_suma =       cCCardInfo[7+poradie*11]
+        blokovana =        cCCardInfo[8+poradie*11]
         datum_vytvorenia = cCCardInfo[9+poradie*11]
-        limit_karty = cCCardInfo[10+poradie*11]
+        limit_karty =      cCCardInfo[10+poradie*11]
+        
         currentCardCompleteInfo = (id_karty,vydavatel,typKreditDebet,cislo_karty,datum_platnosti,cvvKod,id_uctu,dlzna_suma,blokovana,datum_vytvorenia,limit_karty)
         currentCardCompleteInfo = ';'.join(currentCardCompleteInfo)
         print(currentCardCompleteInfo)
 
+        if vydavatel == 'V':
+            vydavatelCely = 'Visa'
+        else:
+            vydavatelCely = 'MasterCard'
+
+        
         lineClientName =       c.create_text(borders*2, h//3 + borders*1, text= f'Meno klienta: {currentClient}', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'w')
         lineCislo_karty =      c.create_text(borders*2, h//3 + borders*3, text= f'Cislo karty: {cislo_karty}', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'w')
         lineDatum_vytvorenia = c.create_text(borders*2, h//3 + borders*5, text= f'Datum vytvorenia: {datum_vytvorenia}', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'w')
@@ -330,19 +342,12 @@ def chosenCard(useless):  ## treba pridat nacitavanie info o karte, aby tam boli
         lineDlzna_suma =       c.create_text(borders*2, h//3 + borders*9, text= f'Dlzna suma: {dlzna_suma}$', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'w')
         lineVydavatel =       c.create_text(borders*2, h//3 + borders*13, text= f'Vydavatel: {vydavatelCely}', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'w')
 
-        blockCardButton = tk.Button(command = blockCard, width = 15, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = '',cursor='hand2',font = fontWidget + (fontSizeSmall,) + (fontItalic,))
         if blokovana == '0':
             lineBlokovana = c.create_text(borders*2, h//3 + borders*11, text='Stav: aktívna', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'w')
             blockCardButton.config(text = 'blokovať kartu')    
         elif blokovana == '1':
             lineBlokovana = c.create_text(borders*2, h//3 + borders*11, text='Stav: blokovaná', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'w')
             blockCardButton.config(text = 'odblokovať kartu')
-        blockCardButton.pack()
-        blockCardButton.place(x = w//2 - borders*2 + widthLines/2, y = h - borders*2, anchor = 'se')
-            
-        deleteCardButton = tk.Button(command = deleteCard,width = 15, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'vymazať kartu',cursor='hand2',font = fontWidget + (fontSizeSmall,) + (fontItalic,))
-        deleteCardButton.pack()
-        deleteCardButton.place(x = w//2 - borders*2 + widthLines/2, y = h - borders*5, anchor = 'se')
 
 ##        displayCard(cardsList[comboCards.current()])
  
