@@ -3,7 +3,6 @@ need 2 get done: DONE ked vytvorim kartu, aby sa updatol combobox + rovno sa sel
                  DONE ked vymazen kartu, nech sa updatne combobox
                  DONE pri blokovani a odblokovani tiez to updatnut
                  zistit a opravit preco obcas pri vytvoreni karty vyhodi error
-                 predist tomu aby sa dal stlacit deleteButton/blockButton aj ked je vybrate " --- vyberte kartu --- "
                  vychytat muchy a komarov, hlavne komarov lebo komarov fakt nemusim...
 '''
 
@@ -268,12 +267,12 @@ def application():
     createCardButton.pack()
     createCardButton.place(x = w-borders*2, y = h-borders*2, anchor = 'se')
     
-    fileInfo(currentClient, currentIN) 
+    fileInfo(currentClient, currentIN)
     ## comboBox pre ucty klienta
     comboCards = ttk.Combobox(font = fontWidget + (fontSizeSmall,) + (fontStyleNone,), values = cardsList, width = 30, state='readonly', justify = 'center')
-    comboCards.current(comboCardsCurrent)
     comboCards.pack()
     comboCards.place(x = borders*2, y = h//4 + borders, anchor='sw')
+    comboCards.current(comboCardsCurrent)
     comboCards.bind("<<ComboboxSelected>>", chosenCard)
 
 ##    blockCardButton = tk.Button(command = blockCard, width = 15, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'blokovať kartu',cursor='hand2',font = fontWidget + (fontSizeSmall,) + (fontItalic,))
@@ -301,11 +300,19 @@ def chosenCard(useless):  ## treba pridat nacitavanie info o karte, aby tam boli
 
 
     if poradie == -1:
-        #blockCardButton.destroy()       ## nechapem ale nefunguje.... 
-        #deleteCardButton.destroy()
-        blockCardButton.config(state='disabled', cursor = 'arrow')
-        deleteCardButton.config(state='disabled', cursor = 'arrow')
+        try:
+            blockCardButton.destroy()       
+            deleteCardButton.destroy()
+        except:
+            print('prvykrat')
+##        blockCardButton.config(state='disabled', cursor = 'arrow')
+##        deleteCardButton.config(state='disabled', cursor = 'arrow')
     else:
+        try:
+            blockCardButton.destroy()       
+            deleteCardButton.destroy()
+        except:
+            print('prvykrat')
         id_karty =         cCCardInfo[poradie*11]
         vydavatel =        cCCardInfo[1+poradie*11]
         typKreditDebet =   cCCardInfo[2+poradie*11]
@@ -576,8 +583,8 @@ def createCard():
                     os.remove("KARTY_LOCK.txt")
 ##                    fileInfo(currentClient, currentIN)
                     najvacsieIdKarty += 1
-                    comboCardsCurrent = cCCardQuantity+1
                     application()
+                    comboCardsCurrent = cCCardQuantity+1
                     chosenCard('useless')
                     limitMessageBox = messagebox.showinfo('Hotovo', 'Karta bola úspešne vytvorená')
 
