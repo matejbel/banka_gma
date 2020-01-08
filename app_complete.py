@@ -279,12 +279,11 @@ def application():
 
 
 def chosenCard(useless): 
-    global blockCardButton, deleteCardButton, id_karty, currentCardCompleteInfo, limit_karty, currentCard,cvvKod,typKreditDebet,lineVydavatel, lineBlokovana, poradie, vydavatel, datum_platnosti, id_uctu, dlzna_suma, blokovana, datum_vytvorenia, lineCislo_karty, lineClientName, lineDatum_vytvorenia, lineDatum_platnosti, lineDlzna_suma, lineBlokovana
+    global currentClient, currentIN, blockCardButton, deleteCardButton, id_karty, currentCardCompleteInfo, limit_karty, currentCard,cvvKod,typKreditDebet,lineVydavatel, lineBlokovana, poradie, vydavatel, datum_platnosti, id_uctu, dlzna_suma, blokovana, datum_vytvorenia, lineCislo_karty, lineClientName, lineDatum_vytvorenia, lineDatum_platnosti, lineDlzna_suma, lineBlokovana
     c.delete(lineCislo_karty, lineClientName, lineDatum_vytvorenia, lineDatum_platnosti, lineDlzna_suma, lineBlokovana, lineVydavatel)
     currentCard = cardsList[comboCards.current()]
     poradie = comboCards.current()-1
-
-
+    
     if poradie == -1:
         try:
             blockCardButton.destroy()       
@@ -299,7 +298,6 @@ def chosenCard(useless):
             deleteCardButton.destroy()
         except:
             None
-        print(True)
         id_karty =         cCCardInfo[poradie*11]
         vydavatel =        cCCardInfo[1+poradie*11]
         typKreditDebet =   cCCardInfo[2+poradie*11]
@@ -414,7 +412,6 @@ def fileInfo(currentClient, currentIN):
         uctySubor.close()
         uctyLockSubor.close()
         os.remove("UCTY_LOCK.txt")
-
     ##### karty
     cCCardQuantity = 0
     cCCardInfo = []
@@ -430,20 +427,33 @@ def fileInfo(currentClient, currentIN):
             if cCAccountId == line[-5]:
                 cCCardQuantity += 1
                 cCCardInfo += line
-        najvacsieIdKarty = int(line[0])
+        najvacsieIdKarty = int(line[0])    
         kartyLockSubor.close()
         kartySubor.close()
         os.remove("KARTY_LOCK.txt")
-
+    ##### transakcie karty
+##    if os.path.exists("TRANSAKCIE_KARTY_LOCK.txt"):
+##        print('there is a lock file')
+##        c.after(2000,fileInfo(currentClient, currentIN))
+##    else:
+##        lockSubor = open("TRANSAKCIE_KARTY_LOCK.txt","w+")   
+##        subor = open("TRANSAKCIE_KARTY.txt","r+")
+##        linesQuantity = subor.readline().strip()
+##        for i in range(int(linesQuantity)):
+##            line = subor.readline().strip().split(';')
+##            
+##        lockSubor.close()
+##        subor.close()
+##        os.remove("TRANSAKCIE_KARTY_LOCK.txt")
 ##    print('vybraty klient: ' + str(cCInfo))
 ##    print('vybraty ucet: ' + str(cCAccountInfo))
-##    print('karty k dispozicii: ' + str(cCCardQuantity), cCCardInfo)
+    print('karty k dispozicii: ' + str(cCCardQuantity), cCCardInfo)
 
     cardsList = ['--- vyberte kartu ---']
     meta = cCCardInfo[3::11] #od 3. itemu az po koniec, ale iba kazdych 9 itemov
     for i in range(len(meta)):
         cardsList.append(meta[i])
-    
+    print(cardsList)
 
 def handleReturn(event):
     print("return: event.widget is",event.widget)
@@ -555,9 +565,10 @@ def createCard():
                     kartyLockSubor.close()
                     kartySubor.close()
                     os.remove("KARTY_LOCK.txt")
-                    najvacsieIdKarty += 1
-                    application()
+                    ###najvacsieIdKarty += 1    ## naco??
                     comboCardsCurrent = len(cardsList)
+                    application()
+                    ###comboCardsCurrent = len(cardsList)
                     #comboCardsCurrent = cCCardQuantity+1
                     print('create: ' + str(comboCardsCurrent))
                     chosenCard('useless')
