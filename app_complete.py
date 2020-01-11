@@ -2,7 +2,8 @@
 need 2 get done: DONE ked vytvorim kartu, aby sa updatol combobox + rovno sa selectla
                  DONE ked vymazen kartu, nech sa updatne combobox
                  DONE pri blokovani a odblokovani tiez to updatnut
-                 zistit a opravit preco obcas pri vytvoreni karty vyhodi error
+                 DONE zistit a opravit preco obcas pri vytvoreni karty vyhodi error
+                 frontend transakcie + nacitanie mena prijemcu a uctu prijemcu
                  vychytat muchy a komarov, hlavne komarov lebo komarov fakt nemusim...
 '''
 
@@ -39,7 +40,6 @@ fontBold = 'bold'
 fontStyleNone = ''
 colorElement = 'black'
 backgroundColor = '#71CAE7'
-##verzia = 'verzia: 84.6.2'
 verzia = ''
 c = tk.Canvas(width = w, height = h, bg = backgroundColor, cursor = 'arrow')
 c.grid(sticky='s')
@@ -57,7 +57,7 @@ currentClient = ''
 currentIN = ''
 
 
-lineCislo_karty = zvolKlienta = incorrectNameOrPassword = lineClientName = lineDatum_vytvorenia = timeShow = lineDatum_platnosti = lineDlzna_suma = lineBlokovana = incorrectNameOrPassword =lineVydavatel= ''
+zvolKlienta = incorrectNameOrPassword = timeShow = incorrectNameOrPassword = line1 = line2 = line3 = line4 = line5 = line6 = line7 = line8 = line9 = line10 = line11 = ''
 
 visaMastercard = tk.IntVar() #the system binds the variables and let you know when variable is changed
 debetKredit = tk.IntVar()
@@ -155,8 +155,6 @@ def loginScreen():
     entryName.pack()
     entryName.place(x = w//2 + borders*2 - widthLines/2, y = h//10*4 + int(fontSizeBig)/2*3, anchor='w')
     entryName.bind("<Return>", loginAut)
-
-##    entryName.insert(0,'meno',font='Arial')
     
     c.create_text(w//2 + borders*3 - widthLines/2, h//10*6, anchor = 'w', text = 'HESLO', fill = colorElement,font = fontMain + (fontSizeBig,) + (fontStyleNone,))
     entryPassword = tk.Entry(c, font = fontWidget + (fontSizeBig,) + (fontStyleNone,), foreground = colorElement,insertbackground=colorElement, show = '*')
@@ -196,10 +194,6 @@ def chooseClientScreen():
     searchEngineButton = tk.Button(command = searchClient, width = 15, bg=colorElement, activebackground = colorElement, foreground = backgroundColor, text = 'hľadať', cursor='hand2', font = fontWidget + (fontSizeMedium,) + (fontBold,))
     searchEngineButton.pack()
     searchEngineButton.place(x = w/5*4+borders, y = h/4, anchor='c')
-
-##    comboClients = ttk.Combobox(font = fontWidget + (fontSizeSmall,) + (fontStyleNone,), values = foundClients, width = 30, state='readonly', justify = 'center')
-##    comboClients.pack()
-##    comboClients.place(x = w/2, y = h/2-borders*3, anchor='c')
     
     scrollbar = tk.Scrollbar()
     scrollbar.pack()
@@ -226,6 +220,7 @@ def application():
 
     essentialLook()
     vertLine = c.create_line(w//2, borders*5, w//2, h, width = widthLines, fill = colorElement)
+    transLine = c.create_line(0, h - borders*8 - widthLines, w//2, h - borders*8 - widthLines, width = widthLines, fill = colorElement)
 
     
     headline1 = c.create_text(borders*2, (borders*5+widthLines/2)/2,text= f'Aktuálne pracujete s klientom: {currentClient}', anchor = 'w', fill=colorElement,font = fontMain + (fontSizeMedium,) + (fontStyleNone,))
@@ -268,20 +263,13 @@ def application():
     createCardButton.place(x = w-borders*2, y = h-borders*2, anchor = 'se')
     
     fileInfo(currentClient, currentIN)
-    ## comboBox pre ucty klienta
+    ## comboBox pre karty klienta
     comboCards = ttk.Combobox(font = fontWidget + (fontSizeSmall,) + (fontStyleNone,), values = cardsList, width = 30, state='readonly', justify = 'center')
+    print('application:   ' + str(comboCardsCurrent))
+    comboCards.current(comboCardsCurrent)
     comboCards.pack()
     comboCards.place(x = borders*2, y = h//4 + borders, anchor='sw')
-    comboCards.current(comboCardsCurrent)
     comboCards.bind("<<ComboboxSelected>>", chosenCard)
-
-##    blockCardButton = tk.Button(command = blockCard, width = 15, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'blokovať kartu',cursor='hand2',font = fontWidget + (fontSizeSmall,) + (fontItalic,))
-##    blockCardButton.pack()
-##    blockCardButton.place(x = w//2 - borders*2 + widthLines/2, y = h - borders*2, anchor = 'se')
-
-##    deleteCardButton = tk.Button(command = deleteCard,width = 15, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'vymazať kartu',cursor='hand2',font = fontWidget + (fontSizeSmall,) + (fontItalic,))
-##    deleteCardButton.pack()
-##    deleteCardButton.place(x = w//2 - borders*2 + widthLines/2, y = h - borders*5, anchor = 'se')
 
     logoutButton = tk.Button(command = logout, width = 10, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'odhlásiť',cursor='hand2',font = fontWidget + (fontSizeMedium,) + (fontBold,))
     logoutButton.pack()
@@ -291,68 +279,18 @@ def application():
     changeClientButton.pack()
     changeClientButton.place(x = w-borders*14, y = (borders*5+widthLines/2)/2, anchor='e')
 
-
-##def blockCard():  ## treba otvorit subor, zmenit ci je karta blokovana, zatvorit subor
-##    global blockCardButton, blokovana, lineBlokovana
-##    blockCardButton = tk.Button(command = blockCard, width = 15, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'blokovať kartu',cursor='hand2',font = fontWidget + (fontSizeSmall,) + (fontItalic,))
-
-    
-    
-##    blockCardButton = tk.Button(command = blockCard, width = 15, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'blokovať kartu',cursor='hand2',font = fontWidget + (fontSizeSmall,) + (fontItalic,))
-##    if blokovana == 0:
-##        blockCardButton.config(text = 'odblokovať kartu')
-##        blokovana = 1
-##    elif blokovana == 1:
-##        blockCardButton.config(text = 'blokovať kartu')
-##        blokovana = 0
-
-##    if blockCardButton['text'] == 'blokovať kartu':
-##        blockCardButton.config(text = 'odblokovať kartu')
-##        blokovana = 1
-##        #notificLine = c.create_text(borders*2, 500, text='Karta bola zablokovaná', font='50', anchor = 'w')  # na to by trebalo vacsiu upravu
-##        #c.after(1000, application)
-##    elif blockCardButton['text'] == 'odblokovať kartu':
-##        blockCardButton.config(text = 'blokovať kartu')
-##        blokovana = 0
-##    blockCardButton.pack()
-##    blockCardButton.place(x = w//2 - borders*2 + widthLines/2, y = h - borders*2, anchor = 'se')
-##    blockCardLine()
-    
-
-##def blockCardLine():   ## moze sa vymazat, nepouziva sa
-##    global blockCardButton, blokovana, lineBlokovana
-##    blockCardButton = tk.Button(command = blockCard, width = 15, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'blokovať kartu',cursor='hand2',font = fontWidget + (fontSizeSmall,) + (fontItalic,))
-##    if blokovana == '0':
-##        print('block')
-##        lineBlokovana =    c.create_text(borders*2, h//3 + borders*11, text='Stav: aktívna', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'w')
-##        blockCardButton.config(text = 'blokovať kartu')
-##        blokovana = 1
-##    elif blokovana == '1':
-##        print('unblock')
-##        lineBlokovana =    c.create_text(borders*2, h//3 + borders*11, text='Stav: blokovaná', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'w')
-##        blockCardButton.config(text = 'odblokovať kartu')
-##        blokovana = 0
-##    blockCardButton.pack()
-##    blockCardButton.place(x = w//2 - borders*2 + widthLines/2, y = h - borders*2, anchor = 'se')
-        
-        
-##def displayCard(cislo_karty):  ## asi zbytocne, vymazat
-##    global cCInfo, lineVydavatel, cCAccountInfo, cCCardInfo, poradie, vydavatel, datum_platnosti, id_uctu, dlzna_suma, blokovana, datum_vytvorenia, lineCislo_karty, lineClientName, lineDatum_vytvorenia, lineDatum_platnosti, lineDlzna_suma, lineBlokovana
-##    None
-
-def chosenCard(useless):  ## treba pridat nacitavanie info o karte, aby tam boli aktualne info, hlavne kvoli blokovaniu karty(pozri def blockCard)
-    global blockCardButton, deleteCardButton, id_karty, currentCardCompleteInfo, limit_karty, currentCard,cvvKod,typKreditDebet,lineVydavatel, lineBlokovana, poradie, vydavatel, datum_platnosti, id_uctu, dlzna_suma, blokovana, datum_vytvorenia, lineCislo_karty, lineClientName, lineDatum_vytvorenia, lineDatum_platnosti, lineDlzna_suma, lineBlokovana
-    c.delete(lineCislo_karty, lineClientName, lineDatum_vytvorenia, lineDatum_platnosti, lineDlzna_suma, lineBlokovana, lineVydavatel)
+def chosenCard(useless): 
+    global currentClient, currentIN, blockCardButton, deleteCardButton, id_karty, cCTransCardInfo, lastPayment, currentCardCompleteInfo, limit_karty, currentCard,cvvKod,typKreditDebet, poradie, vydavatel, datum_platnosti, id_uctu, dlzna_suma, blokovana, datum_vytvorenia, line1, line2, line3, line4, line5, line6, line7, line8, line9, line10, line11
+    c.delete(line1, line2, line3, line4, line5, line6, line7, line8, line9, line10, line11)
     currentCard = cardsList[comboCards.current()]
     poradie = comboCards.current()-1
-
-
+    
     if poradie == -1:
         try:
             blockCardButton.destroy()       
             deleteCardButton.destroy()
         except:
-            print('prvykrat')
+            None
 ##        blockCardButton.config(state='disabled', cursor = 'arrow')
 ##        deleteCardButton.config(state='disabled', cursor = 'arrow')
     else:
@@ -360,7 +298,7 @@ def chosenCard(useless):  ## treba pridat nacitavanie info o karte, aby tam boli
             blockCardButton.destroy()       
             deleteCardButton.destroy()
         except:
-            print('prvykrat')
+            None
         id_karty =         cCCardInfo[poradie*11]
         vydavatel =        cCCardInfo[1+poradie*11]
         typKreditDebet =   cCCardInfo[2+poradie*11]
@@ -389,39 +327,52 @@ def chosenCard(useless):  ## treba pridat nacitavanie info o karte, aby tam boli
         DD, MM, YYYY = datum_vytvorenia[:2], datum_vytvorenia[2:4], datum_vytvorenia[4:]
         datum_vytvorenia = f'{DD}/{MM}/{YYYY}'
         
-        lineClientName =       c.create_text(borders*2, h//3 + borders*1, text= f'Meno klienta: {currentClient}', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'w')
-        lineCislo_karty =      c.create_text(borders*2, h//3 + borders*3, text= f'Cislo karty: {cislo_karty}', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'w')
-        lineDatum_vytvorenia = c.create_text(borders*2, h//3 + borders*5, text= f'Datum vytvorenia: {datum_vytvorenia}', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'w')
-        lineDatum_platnosti =  c.create_text(borders*2, h//3 + borders*7, text= f'Datum platnosti: {datum_platnosti}', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'w')
-        lineDlzna_suma =       c.create_text(borders*2, h//3 + borders*9, text= f'Dlzna suma: {dlzna_suma}$', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'w')
-        lineVydavatel =       c.create_text(borders*2, h//3 + borders*13, text= f'Vydavatel: {vydavatelCely}', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'w')
+        line1 = c.create_text(borders*2, h//3 + borders*1, text= f'Meno klienta: {currentClient}', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'w')
+        line2 = c.create_text(borders*2, h//3 + borders*3, text= f'Cislo karty: {cislo_karty}', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'w')
+        line3 = c.create_text(borders*2, h//3 + borders*5, text= f'Datum vytvorenia: {datum_vytvorenia}', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'w')
+        line4 = c.create_text(borders*2, h//3 + borders*7, text= f'Datum platnosti: {datum_platnosti}', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'w')
+        line5 = c.create_text(borders*2, h//3 + borders*9, text= f'Dlzna suma: {dlzna_suma}$', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'w')
+        line6 = c.create_text(borders*2, h//3 + borders*13, text= f'Vydavatel: {vydavatelCely}', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'w')
 
         blockCardButton = tk.Button(command = blockCard, width = 15, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'blokovať kartu',cursor='hand2',font = fontWidget + (fontSizeSmall,) + (fontItalic,))
         blockCardButton.pack()
-        blockCardButton.place(x = w//2 - borders*2 + widthLines/2, y = h - borders*2, anchor = 'se')
+        blockCardButton.place(x = w//2 - borders*2 + widthLines/2, y = h - borders*10 - widthLines/2, anchor = 'se')
         deleteCardButton = tk.Button(command = deleteCard,width = 15, bg=colorElement,activebackground = colorElement,foreground = backgroundColor,text = 'vymazať kartu',cursor='hand2',font = fontWidget + (fontSizeSmall,) + (fontItalic,))
         deleteCardButton.pack()
-        deleteCardButton.place(x = w//2 - borders*2 + widthLines/2, y = h - borders*5, anchor = 'se')
+        deleteCardButton.place(x = w//2 - borders*2 + widthLines/2, y = h - borders*13 - widthLines/2, anchor = 'se')
 
         if blokovana == '0':
-            lineBlokovana = c.create_text(borders*2, h//3 + borders*11, text='Stav: aktívna', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'w')
+            line7 = c.create_text(borders*2, h//3 + borders*11, text='Stav: aktívna', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'w')
             blockCardButton.config(text = 'blokovať kartu')    
         elif blokovana == '1':
-            lineBlokovana = c.create_text(borders*2, h//3 + borders*11, text='Stav: blokovaná', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'w')
+            line7 = c.create_text(borders*2, h//3 + borders*11, text='Stav: blokovaná', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'w')
             blockCardButton.config(text = 'odblokovať kartu')
+### zmena from here
+        loadTransakcie()
+        if lastPayment != '':
+            meta = 0
+            for i in range(0,len(lastPayment),5):
+                datumTransakcie = cCTransCardInfo[1+i]
+                DD, MM, YYYY = datumTransakcie[:2], datumTransakcie[2:4], datumTransakcie[4:]
+                datumTransakcie = f'{DD}/{MM}/{YYYY}'
+                sumaTransakcie = cCTransCardInfo[3+i]
+                prijemcaTransakcie = 'Janko Mrtvicka..'  ## cCTransCardInfo[4+i]  ## meno prijemcu [klienti.txt] by bolo super
+                ucetPrijemcu = 'SK00006980532..'    ## cislo uctu prijemcu [ucty.txt] by bolo super xD
+                line8 =  c.create_text(borders*2, h - borders*(6+meta), text = f'{datumTransakcie}', font = fontWidget + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'sw')
+                line9 =  c.create_text(borders*8, h - borders*(6+meta), text = f'{sumaTransakcie} €', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'sw')
+                line10 = c.create_text(w//2 - borders*11, h - borders*(6+meta), text = f'{prijemcaTransakcie}', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'se')
+                line11 = c.create_text(w//2 - borders*2, h - borders*(6+meta), text = f'{ucetPrijemcu}', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'se')
+                meta -= 2
+        else:
+            line8 = c.create_text(borders*2, h//3 + borders*17, text = f'Neexistujú žiadne transakcie', font = fontMain + (fontSizeMedium,) + (fontStyleNone,), fill=colorElement, anchor = 'w')
+            print('posledne platby:  ' + ';'.join(lastPayment)) 
 
-        
-
-##        displayCard(cardsList[comboCards.current()])
- 
 def deleteCard():
-    ##ak je zvolena - tak toto a ak nie je, nech to hodi oznamenie ze najprv zvolte kartu
     messageBox = messagebox.askquestion("vymazať kartu", "Naozaj chcete vymazať kartu?", icon='warning')
     if messageBox == 'yes':
         removeCard()
-        print ("karta bola vymazaná")
     else:
-        print ("karta nebola vymazaná")
+        None
 
 def logout():
     global c,currentClient
@@ -429,10 +380,6 @@ def logout():
     c.destroy()
     c = tk.Canvas(width = w, height = h, bg = backgroundColor, cursor = 'arrow')
     c.pack()
-##    foundClients.clear()
-##    listboxClients.delete(0, 'end')
-    print(listboxClients)
-    print(foundClients)
     loginScreen()
     limitMessageBox = messagebox.showinfo('Odhlásenie.', 'Úspešne ste sa odhlásili.')
     
@@ -443,8 +390,6 @@ def changeClient():
     c.destroy()
     c = tk.Canvas(width = w, height = h, bg = backgroundColor, cursor = 'arrow')
     c.pack()
-##    foundClients.clear()
-##    listboxClients.delete(0, 'end')
     chooseClientScreen()
 
 def fileInfo(currentClient, currentIN):
@@ -452,7 +397,6 @@ def fileInfo(currentClient, currentIN):
     ##### klienti
     cC = currentClient
     cC = cC.split()
-    #cC = cC[0] + ';' + cC[1]
     if os.path.exists("KLIENTI_LOCK.txt"):
         print('there is a lock file')
         c.after(2000,fileInfo(currentClient, currentIN))
@@ -460,7 +404,6 @@ def fileInfo(currentClient, currentIN):
         klientiLockSubor = open("KLIENTI_LOCK.txt","w+")   
         klientiSubor = open("KLIENTI.txt","r+")               
         linesQuantity = klientiSubor.readline().strip()
-        print(linesQuantity)
         for i in range(int(linesQuantity)):
             line = klientiSubor.readline().strip().split(';')
             if line[1] == cC[0] and line[2] == cC[1]:
@@ -487,7 +430,6 @@ def fileInfo(currentClient, currentIN):
         uctySubor.close()
         uctyLockSubor.close()
         os.remove("UCTY_LOCK.txt")
-
     ##### karty
     cCCardQuantity = 0
     cCCardInfo = []
@@ -503,20 +445,34 @@ def fileInfo(currentClient, currentIN):
             if cCAccountId == line[-5]:
                 cCCardQuantity += 1
                 cCCardInfo += line
-        najvacsieIdKarty = int(line[0])
+        najvacsieIdKarty = int(line[0])    
         kartyLockSubor.close()
         kartySubor.close()
         os.remove("KARTY_LOCK.txt")
-
-    print('vybraty klient: ' + str(cCInfo))
-    print('vybraty ucet: ' + str(cCAccountInfo))
+    ##### transakcie karty
+##    if os.path.exists("TRANSAKCIE_KARTY_LOCK.txt"):
+##        print('there is a lock file')
+##        c.after(2000,fileInfo(currentClient, currentIN))
+##    else:
+##        transKartyLockSubor = open("TRANSAKCIE_KARTY_LOCK.txt","w+")   
+##        transKartySubor = open("TRANSAKCIE_KARTY.txt","r+")
+##        linesQuantity = subor.readline().strip()
+##        for i in range(int(linesQuantity)):
+##            line = subor.readline().strip().split(';')
+##            if line[2] == cCCardInfo[5]:
+##        lockSubor.close()
+##        subor.close()
+##        os.remove("TRANSAKCIE_KARTY_LOCK.txt")
+        
+##    print('vybraty klient: ' + str(cCInfo))
+##    print('vybraty ucet: ' + str(cCAccountInfo))
     print('karty k dispozicii: ' + str(cCCardQuantity), cCCardInfo)
 
     cardsList = ['--- vyberte kartu ---']
     meta = cCCardInfo[3::11] #od 3. itemu az po koniec, ale iba kazdych 9 itemov
     for i in range(len(meta)):
         cardsList.append(meta[i])
-    
+    print(cardsList)
 
 def handleReturn(event):
     print("return: event.widget is",event.widget)
@@ -563,7 +519,6 @@ def chosenClient(useless):
         meta2 = currentClient.rfind('₋')
         currentIN = currentClient[meta2+2:]
         currentClient = currentClient[0:meta-1]
-    ##    print(f'{currentClient} {currentIN}')
     except:
         currentClient = " ".join(listboxClients.get('active')).title()
         meta = currentClient.find('₋')
@@ -591,7 +546,7 @@ def outDateCalculator(n):
     return n + ((10**len(str(n)) - 1) // 9)
 
 def createCard():
-    global najvacsieIdKarty, comboCardsCurrent
+    global najvacsieIdKarty, comboCardsCurrent, visaMastercard, debetKredit, cCCardQuantity
     if os.path.exists("KARTY_LOCK.txt"):
         print('there is a lock file')
         c.after(2000,createCard)
@@ -629,15 +584,14 @@ def createCard():
                     kartyLockSubor.close()
                     kartySubor.close()
                     os.remove("KARTY_LOCK.txt")
-##                    fileInfo(currentClient, currentIN)
-                    najvacsieIdKarty += 1
+                    comboCardsCurrent = len(cardsList)
+                    print('create: ' + str(comboCardsCurrent))
                     application()
-                    comboCardsCurrent = cCCardQuantity+1
                     chosenCard('useless')
                     limitMessageBox = messagebox.showinfo('Hotovo', 'Karta bola úspešne vytvorená')
 
                 else:
-                    cardTypeMessageBox = messagebox.showinfo('Druh', 'Najprv zvoľte typ a vydavateľa karty')    
+                    messagebox.showinfo('Druh', 'Najprv zvoľte typ a vydavateľa karty')    
         else:
             limitMessageBox = messagebox.showinfo('Limit', 'Limit prečerpania musí byť kladné číslo')
 
@@ -651,14 +605,12 @@ def removeCard():
         print('there is a lock file')
         c.after(2000,removeCard)
     else:
-        newCardCompleteInfo = currentCardCompleteInfo + '\n'
+        newCardCompleteInfo = '\n' + currentCardCompleteInfo
         kartyLockSubor = open("KARTY_LOCK.txt","w+")   
         kartySubor = open("KARTY.txt","r+")
         wholeFile = kartySubor.read().replace(newCardCompleteInfo,'')
         numberOfCards = wholeFile.find('\n')
         numberOfCards = wholeFile[:numberOfCards]
-##        wholeFileSplit = kartySubor.read().split('\n')
-##        removeCardPosition = wholeFileSplit.index(currentCardCompleteInfo)
         kartySubor.close()
         os.remove("KARTY.txt")
         wholeFile = f'{str(int(numberOfCards) - 1)}{wholeFile[len(numberOfCards):]}'
@@ -667,16 +619,15 @@ def removeCard():
         kartyLockSubor.close()
         kartySubor.close()
         os.remove("KARTY_LOCK.txt")
-##        fileInfo(currentClient, currentIN)
         comboCardsCurrent = 0
         application()
         limitMessageBox = messagebox.showinfo('Hotovo', 'Karta bola úspešne zmazaná')
 
 def blockCard():
-    global blockCardButton, blokovana, lineBlokovana, currentCardCompleteInfo
+    global blockCardButton, blokovana, currentCardCompleteInfo
     if os.path.exists("KARTY_LOCK.txt"):
         print('there is a lock file')
-        c.after(2000,isCardBlocked)
+        c.after(2000, blockCard)
     else:
         if blokovana == '0':
             zmena = '1'
@@ -690,16 +641,10 @@ def blockCard():
         NewCompleteInfo[-3] = zmena
         NewCompleteInfo = ';'.join(NewCompleteInfo)
         NewCompleteInfo = NewCompleteInfo + '\n'
-##        print(repr(NewCompleteInfo))
-##        print(repr(currentCardCompleteInfo))
         oldCardCompleteInfo = currentCardCompleteInfo + '\n'
-##        print(repr(oldCardCompleteInfo))       
         kartyLockSubor = open("KARTY_LOCK.txt","w+")   
         kartySubor = open("KARTY.txt","r+")
         wholeFile = kartySubor.read().replace(oldCardCompleteInfo,NewCompleteInfo)
-##        print(repr(wholeFile))
-##        wholeFileSplit = kartySubor.read().split('\n')
-##        removeCardPosition = wholeFileSplit.index(currentCardCompleteInfo)
         kartySubor.close()
         os.remove("KARTY.txt")
         kartySubor = open("KARTY.txt","w+")
@@ -707,21 +652,39 @@ def blockCard():
         kartyLockSubor.close()
         kartySubor.close()
         os.remove("KARTY_LOCK.txt")
-##        fileInfo(currentClient, currentIN)
-                                                ## myslim ze netreba, lebo sa hned potom zavola fileInfo, kde sa nacitaju aktualne udaje, cize aj to ze je karta blokovana a chosenCard to vypise
-##        if zmena == '0':
-##            c.delete(lineBlokovana)
-##            lineBlokovana = c.create_text(borders*2, h//3 + borders*11, text='Stav: aktívna', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'w')
-##            blockCardButton.config(text = 'blokovať kartu')
-##        elif zmena == '1':
-##            c.delete(lineBlokovana)
-##            lineBlokovana = c.create_text(borders*2, h//3 + borders*11, text='Stav: blokovaná', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'w')
-##            blockCardButton.config(text = 'odblokovať kartu')
-##        blockCardButton.pack()
-##        blockCardButton.place(x = w//2 - borders*2 + widthLines/2, y = h - borders*2, anchor = 'se')
         fileInfo(currentClient, currentIN)
         chosenCard('useless')
         limitMessageBox = messagebox.showinfo('Hotovo', f'Karta bola úspešne {messageBoxWord}')
+
+def loadTransakcie():
+    global id_karty, cCTransCardInfo, lastPayment
+    if os.path.exists("TRANSAKCIE_KARTY_LOCK.txt"):
+        print('there is a lock file')
+        c.after(2000,loadTransakcie())
+    else:
+        transKartyLockSubor = open("TRANSAKCIE_KARTY_LOCK.txt","w+")   
+        transKartySubor = open("TRANSAKCIE_KARTY.txt","r+")
+        linesQuantity = transKartySubor.readline().strip()
+        paymentQuantity = 0
+        cCTransCardInfo = []
+        for i in range(int(linesQuantity)):
+            line = transKartySubor.readline().strip().split(';')
+            if line[2] == id_karty:
+                paymentQuantity += 1
+                cCTransCardInfo += line
+        transKartyLockSubor.close()
+        transKartySubor.close()
+        os.remove("TRANSAKCIE_KARTY_LOCK.txt")
+            
+        if len(cCTransCardInfo) >= 5*3:
+            lastPayment = cCTransCardInfo[-15:-1]
+            datumTransakcie = cCTransCardInfo[1+(-3*5)]
+        elif len(cCTransCardInfo) >= 5*2:
+            lastPayment = cCTransCardInfo[-10:-1]
+        elif len(cCTransCardInfo) >= 5:
+            lastPayment = cCTransCardInfo[-5:-1]
+        else:
+            lastPayment = ''
 
 
 loginScreen()
