@@ -647,8 +647,8 @@ def blockCard():
         NewCompleteInfo = currentCardCompleteInfo.split(';')
         NewCompleteInfo[-3] = zmena
         NewCompleteInfo = ';'.join(NewCompleteInfo)
-        NewCompleteInfo = NewCompleteInfo + '\n'
-        oldCardCompleteInfo = currentCardCompleteInfo + '\n'
+        NewCompleteInfo =  '\n' + NewCompleteInfo
+        oldCardCompleteInfo =  '\n' + currentCardCompleteInfo
         kartyLockSubor = open("KARTY_LOCK.txt","w+")   
         kartySubor = open("KARTY.txt","r+")
         wholeFile = kartySubor.read().replace(oldCardCompleteInfo,NewCompleteInfo)
