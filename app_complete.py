@@ -376,10 +376,10 @@ def chosenCard(useless):
                 DD, MM, YYYY = datumTransakcie[:2], datumTransakcie[2:4], datumTransakcie[4:]
                 datumTransakcie = f'{DD}/{MM}/{YYYY}'
                 sumaTransakcie = cCTransCardInfo[3+i] + ' €'
-                prijemcaTransakcie = 'Janko Mrtvicka'  ## cCTransCardInfo[4+i]  ## meno prijemcu [klienti.txt] by bolo super
+                #prijemcaTransakcie = 'Janko Mrtvicka'  ## cCTransCardInfo[4+i]  ## meno prijemcu [klienti.txt] by bolo super
 
                 idUctuPrijemcu = cCTransCardInfo[4+i]
-                loadUcty(idUctuPrijemcu)
+                loadUctyKlienti(idUctuPrijemcu)
                 spaces = (6 - len(sumaTransakcie)) * ' '
                 item = f'{datumTransakcie} {sumaTransakcie} {spaces}{prijemcaTransakcie} {ucetPrijemcu}'
                 listboxTransactions.insert('end', item)
@@ -388,22 +388,37 @@ def chosenCard(useless):
         print('posledne platby:  ' + ';'.join(lastPayment)) 
 
 
-def loadUcty(idU):
-    global ucetPrijemcu
+def loadUctyKlienti(idUctu):
+    global ucetPrijemcu, prijemcaTransakcie
     if os.path.exists("UCTY_LOCK.txt"):
-        print('there is a lock file')
-        c.after(afterTime,loadUcty(idU))
+        print('there is a lock file [ucty.txt]')
+        c.after(afterTime,loadUctyKlienti(idUctu))
     else:
-        uctyLockSubor = open("UCTY_LOCK.txt","w+")   
-        uctySubor = open("UCTY.txt","r+")               
+        uctyLockSubor = open("UCTY_LOCK.txt","w+")
+        uctySubor = open("UCTY.txt","r+")
         linesQuantity = uctySubor.readline().strip()
         for i in range(int(linesQuantity)):
             line = uctySubor.readline().strip().split(';')
-            if idU == line[0]:
+            if idUctu == line[0]:
                 ucetPrijemcu = line[2]
+                idKlienta = line[1]
         uctySubor.close()
         uctyLockSubor.close()
         os.remove("UCTY_LOCK.txt")
+        if os.path.exists("KLIENTI_LOCK.txt"):
+            print('there is a lock file [klienti.txt]')
+            c.after(afterTime,loadUctyKlienti(idUctu))
+        else:
+            klientiLockSubor = open("KLIENTI_LOCK.txt","w+")
+            klientiSubor = open("KLIENTI.txt","r+")
+            linesQuantity = klientiSubor.readline().strip()
+            for i in range(int(linesQuantity)):
+                line = klientiSubor.readline().strip().split(';')
+                if line[0] == idKlienta:
+                    prijemcaTransakcie = ' '.join(line[1:3])
+            klientiSubor.close()
+            klientiLockSubor.close()
+            os.remove("KLIENTI_LOCK.txt")
         #return ucetPrijemcu
     
 
@@ -699,17 +714,18 @@ def loadTransakcie():
         transKartyLockSubor.close()
         transKartySubor.close()
         os.remove("TRANSAKCIE_KARTY_LOCK.txt")
-            
+        #print(cCTransCardInfo)
         if len(cCTransCardInfo) >= 5*3:
             lastPayment = cCTransCardInfo[-15:-1]
-            datumTransakcie = cCTransCardInfo[1+(-3*5)]
+            #print(lastPayment)
+            #datumTransakcie = cCTransCardInfo[1+(-3*5)]
         elif len(cCTransCardInfo) >= 5*2:
             lastPayment = cCTransCardInfo[-10:-1]
         elif len(cCTransCardInfo) >= 5:
             lastPayment = cCTransCardInfo[-5:-1]
         else:
             lastPayment = ''
-
+        #print(lastPayment)
 
 loginScreen()
 
