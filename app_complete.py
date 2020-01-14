@@ -372,13 +372,13 @@ def chosenCard(useless):
         
         if lastPayment != '':
             for i in range(0,len(lastPayment),5):
-                datumTransakcie = cCTransCardInfo[1+i]
+                datumTransakcie = lastPayment[1+i]
                 DD, MM, YYYY = datumTransakcie[:2], datumTransakcie[2:4], datumTransakcie[4:]
                 datumTransakcie = f'{DD}/{MM}/{YYYY}'
-                sumaTransakcie = cCTransCardInfo[3+i] + ' €'
+                sumaTransakcie = lastPayment[3+i] + ' €'
                 #prijemcaTransakcie = 'Janko Mrtvicka'  ## cCTransCardInfo[4+i]  ## meno prijemcu [klienti.txt] by bolo super
 
-                idUctuPrijemcu = cCTransCardInfo[4+i]
+                idUctuPrijemcu = lastPayment[4+i]
                 loadUctyKlienti(idUctuPrijemcu)
                 spaces = (6 - len(sumaTransakcie)) * ' '
                 item = f'{datumTransakcie} {sumaTransakcie} {spaces}{prijemcaTransakcie} {ucetPrijemcu}'
