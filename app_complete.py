@@ -1,6 +1,7 @@
 '''
 need 2 get done: frontend transakcie + nacitanie mena prijemcu a uctu prijemcu
                  ak existuje lockfile transakcii kariet, a potom sa vymaze, tak load transakcie sa dokonci, ale nevypisu sa, lebo hodi, ze nie je defined
+                 uz len naloadovat klienta do transakcii
 '''
 
 
@@ -279,7 +280,7 @@ def application():
     changeClientButton.place(x = w-borders*14, y = (borders*5+widthLines/2)/2, anchor='e')
 
 def chosenCard(useless): 
-    global lastPayment, headline9, xscrollbar, listboxTransactions, currentClient, currentIN, blockCardButton, deleteCardButton, id_karty, cCTransCardInfo, lastPayment, currentCardCompleteInfo, limit_karty, currentCard,cvvKod,typKreditDebet, poradie, vydavatel, datum_platnosti, id_uctu, dlzna_suma, blokovana, datum_vytvorenia, line1, line2, line3, line4, line5, line6, line7, line8, line9, line10, line11
+    global lastPayment, ucetPrijemcu, headline9, xscrollbar, listboxTransactions, currentClient, currentIN, blockCardButton, deleteCardButton, id_karty, cCTransCardInfo, currentCardCompleteInfo, limit_karty, currentCard,cvvKod,typKreditDebet, poradie, vydavatel, datum_platnosti, id_uctu, dlzna_suma, blokovana, datum_vytvorenia, line1, line2, line3, line4, line5, line6, line7, line8, line9, line10, line11
     c.delete(line1, line2, line3, line4, line5, line6, line7, line8, line9, line10, line11)
     currentCard = cardsList[comboCards.current()]
     poradie = comboCards.current()-1
@@ -370,26 +371,42 @@ def chosenCard(useless):
         loadTransakcie()
         
         if lastPayment != '':
-            meta = 0
             for i in range(0,len(lastPayment),5):
                 datumTransakcie = cCTransCardInfo[1+i]
                 DD, MM, YYYY = datumTransakcie[:2], datumTransakcie[2:4], datumTransakcie[4:]
                 datumTransakcie = f'{DD}/{MM}/{YYYY}'
                 sumaTransakcie = cCTransCardInfo[3+i] + ' €'
                 prijemcaTransakcie = 'Janko Mrtvicka'  ## cCTransCardInfo[4+i]  ## meno prijemcu [klienti.txt] by bolo super
-                ucetPrijemcu = 'SK0000698053245659266526562'    ## cislo uctu prijemcu [ucty.txt] by bolo super xD
+
+                idUctuPrijemcu = cCTransCardInfo[4+i]
+                loadUcty(idUctuPrijemcu)
                 spaces = (6 - len(sumaTransakcie)) * ' '
                 item = f'{datumTransakcie} {sumaTransakcie} {spaces}{prijemcaTransakcie} {ucetPrijemcu}'
                 listboxTransactions.insert('end', item)
-##                line8 =  c.create_text(borders*2, h - borders*(6+meta), text = f'{datumTransakcie}', font = fontWidget + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'sw')
-##                line9 =  c.create_text(borders*8, h - borders*(6+meta), text = f'{sumaTransakcie} €', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'sw')
-##                line10 = c.create_text(w//2 - borders*11, h - borders*(6+meta), text = f'{prijemcaTransakcie}', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'se')
-##                line11 = c.create_text(w//2 - borders*2, h - borders*(6+meta), text = f'{ucetPrijemcu}', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'se')
-##                meta -= 2
         else:
             listboxTransactions.insert('end', 'Neexistujú žiadne transakcie')
-##            line8 = c.create_text(borders*2, h//3 + borders*17, text = f'Neexistujú žiadne transakcie', font = fontMain + (fontSizeMedium,) + (fontStyleNone,), fill=colorElement, anchor = 'w')
-##            print('posledne platby:  ' + ';'.join(lastPayment)) 
+        print('posledne platby:  ' + ';'.join(lastPayment)) 
+
+
+def loadUcty(idU):
+    global ucetPrijemcu
+    if os.path.exists("UCTY_LOCK.txt"):
+        print('there is a lock file')
+        c.after(afterTime,loadUcty(idU))
+    else:
+        uctyLockSubor = open("UCTY_LOCK.txt","w+")   
+        uctySubor = open("UCTY.txt","r+")               
+        linesQuantity = uctySubor.readline().strip()
+        for i in range(int(linesQuantity)):
+            line = uctySubor.readline().strip().split(';')
+            if idU == line[0]:
+                ucetPrijemcu = line[2]
+        uctySubor.close()
+        uctyLockSubor.close()
+        os.remove("UCTY_LOCK.txt")
+        #return ucetPrijemcu
+    
+
 
 def deleteCard():
     messageBox = messagebox.askquestion("vymazať kartu", "Naozaj chcete vymazať kartu?", icon='warning')
