@@ -371,14 +371,15 @@ def chosenCard(useless):
         loadTransakcie()
         
         if lastPayment != '':
+            print(lastPayment)
             for i in range(0,len(lastPayment),5):
-                datumTransakcie = cCTransCardInfo[1+i]
+                datumTransakcie = lastPayment[1+i]
                 DD, MM, YYYY = datumTransakcie[:2], datumTransakcie[2:4], datumTransakcie[4:]
                 datumTransakcie = f'{DD}/{MM}/{YYYY}'
-                sumaTransakcie = cCTransCardInfo[3+i] + ' €'
+                sumaTransakcie = lastPayment[3+i] + ' €'
                 #prijemcaTransakcie = 'Janko Mrtvicka'  ## cCTransCardInfo[4+i]  ## meno prijemcu [klienti.txt] by bolo super
-
-                idUctuPrijemcu = cCTransCardInfo[4+i]
+                print(i)
+                idUctuPrijemcu = lastPayment[4+i]
                 loadUctyKlienti(idUctuPrijemcu)
                 spaces = (6 - len(sumaTransakcie)) * ' '
                 item = f'{datumTransakcie} {sumaTransakcie} {spaces}{prijemcaTransakcie} {ucetPrijemcu}'
@@ -696,7 +697,7 @@ def blockCard():
         limitMessageBox = messagebox.showinfo('Hotovo', f'Karta bola úspešne {messageBoxWord}')
 
 def loadTransakcie():
-    global id_karty, cCTransCardInfo, lastPayment, c
+    global id_karty, cCTransCardInfo, lastPayment, c, paymentQuantity
     if os.path.exists("TRANSAKCIE_KARTY_LOCK.txt"):
         print('there is a lock file')
         c.after(afterTime,loadTransakcie)
@@ -711,20 +712,24 @@ def loadTransakcie():
             if line[2] == id_karty:
                 paymentQuantity += 1
                 cCTransCardInfo += line
+                print(paymentQuantity)
         transKartyLockSubor.close()
         transKartySubor.close()
         os.remove("TRANSAKCIE_KARTY_LOCK.txt")
         #print(cCTransCardInfo)
-        if len(cCTransCardInfo) >= 5*3:
-            lastPayment = cCTransCardInfo[-15:-1]
-            #print(lastPayment)
-            #datumTransakcie = cCTransCardInfo[1+(-3*5)]
-        elif len(cCTransCardInfo) >= 5*2:
-            lastPayment = cCTransCardInfo[-10:-1]
-        elif len(cCTransCardInfo) >= 5:
-            lastPayment = cCTransCardInfo[-5:-1]
-        else:
-            lastPayment = ''
+        print(paymentQuantity)
+        lastPayment = cCTransCardInfo[5*(int(paymentQuantity)-3)::]
+        print(paymentQuantity, lastPayment)
+##        if len(cCTransCardInfo) >= 5*3:
+##            lastPayment = cCTransCardInfo[-15:-1]
+##            print(lastPayment)
+##            #datumTransakcie = cCTransCardInfo[1+(-3*5)]
+##        elif len(cCTransCardInfo) >= 5*2:
+##            lastPayment = cCTransCardInfo[-10:-1]
+##        elif len(cCTransCardInfo) >= 5:
+##            lastPayment = cCTransCardInfo[-5:-1]
+##        else:
+##            lastPayment = ''
         #print(lastPayment)
 
 loginScreen()
