@@ -153,6 +153,7 @@ def loginScreen():
     entryName.pack()
     entryName.place(x = w//2 + borders*2 - widthLines/2, y = h//10*4 + int(fontSizeBig)/2*3, anchor='w')
     entryName.bind("<Return>", loginAut)
+    entryName.focus_set()
     
     c.create_text(w//2 + borders*3 - widthLines/2, h//10*6, anchor = 'w', text = 'HESLO', fill = colorElement,font = fontMain + (fontSizeBig,) + (fontStyleNone,))
     entryPassword = tk.Entry(c, font = fontWidget + (fontSizeBig,) + (fontStyleNone,), foreground = colorElement,insertbackground=colorElement, show = '*')
@@ -188,7 +189,8 @@ def chooseClientScreen():
     searchEngineEntry.bind("<Return>", searchCli)
     
 
-    searchEngineEntry.insert(0,'jano') ##vymazat potom
+    #searchEngineEntry.insert(0,'jano') ##vymazat potom
+    searchEngineEntry.focus_set()
     
 
     searchEngineButton = tk.Button(command = searchClient, width = 15, bg=colorElement, activebackground = colorElement, foreground = backgroundColor, text = 'hľadať', cursor='hand2', font = fontWidget + (fontSizeMedium,) + (fontBold,))
@@ -213,7 +215,9 @@ def chooseClientScreen():
 
 
 def application():
-    global comboCards,searchEngineEntry,c,blockCardButton,limitEntry, comboCardsCurrent
+    global comboCards,searchEngineEntry,c,blockCardButton,limitEntry, comboCardsCurrent, visaMastercard, debetKredit
+    visaMastercard.set(0)
+    debetKredit.set(0)
     c.destroy()
     c = tk.Canvas(width = w, height = h, bg = backgroundColor, cursor = 'arrow')
     c.pack()
@@ -586,7 +590,7 @@ def createCard():
     else:
         cardLimit = limitEntry.get()
         if cardLimit.lstrip('+-').isdigit():
-            if float(cardLimit) >= 0:
+            if float(cardLimit) > 0:
                 if visaMastercard.get() != 0 and debetKredit.get() != 0:
                     if visaMastercard.get() == 1:
                         visaMasterCardBinary = 'V'
@@ -624,6 +628,8 @@ def createCard():
 
                 else:
                     messagebox.showinfo('Druh', 'Najprv zvoľte typ a vydavateľa karty')    
+            else:
+                limitMessageBox = messagebox.showinfo('Limit', 'Limit prečerpania musí byť kladné číslo')
         else:
             limitMessageBox = messagebox.showinfo('Limit', 'Limit prečerpania musí byť kladné číslo')
 
