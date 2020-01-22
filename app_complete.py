@@ -265,7 +265,6 @@ def application():
     fileInfo(currentClient, currentIN)
     ## comboBox pre karty klienta
     comboCards = ttk.Combobox(font = fontWidget + (fontSizeSmall,) + (fontStyleNone,), values = cardsList, width = 45, state='readonly', justify = 'center')
-    print('application:   ' + str(comboCardsCurrent))
     comboCards.current(comboCardsCurrent)
     comboCards.pack()
     comboCards.place(x = borders*2, y = h//4 + borders, anchor='sw')
@@ -371,14 +370,11 @@ def chosenCard(useless):
         loadTransakcie()
         
         if lastPayment != '':
-            print(lastPayment)
             for i in range(0,len(lastPayment),5):
                 datumTransakcie = lastPayment[1+i]
                 DD, MM, YYYY = datumTransakcie[:2], datumTransakcie[2:4], datumTransakcie[4:]
                 datumTransakcie = f'{DD}/{MM}/{YYYY}'
                 sumaTransakcie = lastPayment[3+i] + ' €'
-                #prijemcaTransakcie = 'Janko Mrtvicka'  ## cCTransCardInfo[4+i]  ## meno prijemcu [klienti.txt] by bolo super
-                print(i)
                 idUctuPrijemcu = lastPayment[4+i]
                 loadUctyKlienti(idUctuPrijemcu)
                 spaces = (6 - len(sumaTransakcie)) * ' '
@@ -386,8 +382,6 @@ def chosenCard(useless):
                 listboxTransactions.insert('end', item)
         else:
             listboxTransactions.insert('end', 'Neexistujú žiadne transakcie')
-        print('posledne platby:  ' + ';'.join(lastPayment)) 
-
 
 def loadUctyKlienti(idUctu):
     global ucetPrijemcu, prijemcaTransakcie
@@ -506,13 +500,12 @@ def fileInfo(currentClient, currentIN):
         kartyLockSubor.close()
         kartySubor.close()
         os.remove("KARTY_LOCK.txt")
-    print('karty k dispozicii: ' + str(cCCardQuantity), cCCardInfo)
+    #print('karty k dispozicii: ' + str(cCCardQuantity), cCCardInfo)
 
     cardsList = ['--- vyberte kartu ---']
     meta = cCCardInfo[3::11] #od 3. itemu az po koniec, ale iba kazdych 9 itemov
     for i in range(len(meta)):
         cardsList.append(meta[i])
-    print(cardsList)
 
 def handleReturn(event):
     print("return: event.widget is",event.widget)
@@ -625,7 +618,6 @@ def createCard():
                     kartySubor.close()
                     os.remove("KARTY_LOCK.txt")
                     comboCardsCurrent = len(cardsList)
-                    print('create: ' + str(comboCardsCurrent))
                     application()
                     chosenCard('useless')
                     limitMessageBox = messagebox.showinfo('Hotovo', 'Karta bola úspešne vytvorená')
@@ -640,28 +632,34 @@ def createCa(useless):
     createCard()
 
 def removeCard():
-    global currentCardCompleteInfo, comboCardsCurrent, c
+    global currentCardCompleteInfo, comboCardsCurrent, c, dlzna_suma
+    #loading = c.create_text(0,0,text='')
     if os.path.exists("KARTY_LOCK.txt"):
         print('there is a lock file')
+        #loading = c.create_text(w//2, h//2, text='L o a d i n g . . .', font='Arial 30')
         c.after(afterTime,removeCard)
     else:
-        newCardCompleteInfo = '\n' + currentCardCompleteInfo
-        kartyLockSubor = open("KARTY_LOCK.txt","w+")   
-        kartySubor = open("KARTY.txt","r+")
-        wholeFile = kartySubor.read().replace(newCardCompleteInfo,'')
-        numberOfCards = wholeFile.find('\n')
-        numberOfCards = wholeFile[:numberOfCards]
-        kartySubor.close()
-        os.remove("KARTY.txt")
-        wholeFile = f'{str(int(numberOfCards) - 1)}{wholeFile[len(numberOfCards):]}'
-        kartySubor = open("KARTY.txt","w+")
-        kartySubor.write(wholeFile)
-        kartyLockSubor.close()
-        kartySubor.close()
-        os.remove("KARTY_LOCK.txt")
-        comboCardsCurrent = 0
-        application()
-        limitMessageBox = messagebox.showinfo('Hotovo', 'Karta bola úspešne zmazaná')
+        #c.delete(loading)
+        if dlzna_suma != '0':
+            limitMessageBox = messagebox.showinfo('Chyba', f'Karta má dlžnú sumu!'+'\n'+f'Dlžná suma: {dlzna_suma}', icon='warning')
+        else:
+            newCardCompleteInfo = '\n' + currentCardCompleteInfo
+            kartyLockSubor = open("KARTY_LOCK.txt","w+")   
+            kartySubor = open("KARTY.txt","r+")
+            wholeFile = kartySubor.read().replace(newCardCompleteInfo,'')
+            numberOfCards = wholeFile.find('\n')
+            numberOfCards = wholeFile[:numberOfCards]
+            kartySubor.close()
+            os.remove("KARTY.txt")
+            wholeFile = f'{str(int(numberOfCards) - 1)}{wholeFile[len(numberOfCards):]}'
+            kartySubor = open("KARTY.txt","w+")
+            kartySubor.write(wholeFile)
+            kartyLockSubor.close()
+            kartySubor.close()
+            os.remove("KARTY_LOCK.txt")
+            comboCardsCurrent = 0
+            application()
+            limitMessageBox = messagebox.showinfo('Hotovo', 'Karta bola úspešne zmazaná')
 
 def blockCard():
     global blockCardButton, blokovana, currentCardCompleteInfo, c
@@ -712,33 +710,12 @@ def loadTransakcie():
             if line[2] == id_karty:
                 paymentQuantity += 1
                 cCTransCardInfo += line
-                print(paymentQuantity)
         transKartyLockSubor.close()
         transKartySubor.close()
         os.remove("TRANSAKCIE_KARTY_LOCK.txt")
-        #print(cCTransCardInfo)
         print(paymentQuantity)
         lastPayment = cCTransCardInfo[5*(int(paymentQuantity)-3)::]
-        print(paymentQuantity, lastPayment)
-##        if len(cCTransCardInfo) >= 5*3:
-##            lastPayment = cCTransCardInfo[-15:-1]
-##            print(lastPayment)
-##            #datumTransakcie = cCTransCardInfo[1+(-3*5)]
-##        elif len(cCTransCardInfo) >= 5*2:
-##            lastPayment = cCTransCardInfo[-10:-1]
-##        elif len(cCTransCardInfo) >= 5:
-##            lastPayment = cCTransCardInfo[-5:-1]
-##        else:
-##            lastPayment = ''
-        #print(lastPayment)
+
 
 loginScreen()
-
-
-
-
-
-
-
-
 
