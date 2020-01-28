@@ -153,6 +153,7 @@ def loginScreen():
     entryName.pack()
     entryName.place(x = w//2 + borders*2 - widthLines/2, y = h//10*4 + int(fontSizeBig)/2*3, anchor='w')
     entryName.bind("<Return>", loginAut)
+    entryName.focus_set()
     
     c.create_text(w//2 + borders*3 - widthLines/2, h//10*6, anchor = 'w', text = 'HESLO', fill = colorElement,font = fontMain + (fontSizeBig,) + (fontStyleNone,))
     entryPassword = tk.Entry(c, font = fontWidget + (fontSizeBig,) + (fontStyleNone,), foreground = colorElement,insertbackground=colorElement, show = '*')
@@ -188,7 +189,8 @@ def chooseClientScreen():
     searchEngineEntry.bind("<Return>", searchCli)
     
 
-    searchEngineEntry.insert(0,'jano') ##vymazat potom
+    #searchEngineEntry.insert(0,'jano') ##vymazat potom
+    searchEngineEntry.focus_set()
     
 
     searchEngineButton = tk.Button(command = searchClient, width = 15, bg=colorElement, activebackground = colorElement, foreground = backgroundColor, text = 'hľadať', cursor='hand2', font = fontWidget + (fontSizeMedium,) + (fontBold,))
@@ -213,7 +215,9 @@ def chooseClientScreen():
 
 
 def application():
-    global comboCards,searchEngineEntry,c,blockCardButton,limitEntry, comboCardsCurrent
+    global comboCards,searchEngineEntry,c,blockCardButton,limitEntry, comboCardsCurrent, visaMastercard, debetKredit
+    visaMastercard.set(0)
+    debetKredit.set(0)
     c.destroy()
     c = tk.Canvas(width = w, height = h, bg = backgroundColor, cursor = 'arrow')
     c.pack()
@@ -265,7 +269,6 @@ def application():
     fileInfo(currentClient, currentIN)
     ## comboBox pre karty klienta
     comboCards = ttk.Combobox(font = fontWidget + (fontSizeSmall,) + (fontStyleNone,), values = cardsList, width = 45, state='readonly', justify = 'center')
-    print('application:   ' + str(comboCardsCurrent))
     comboCards.current(comboCardsCurrent)
     comboCards.pack()
     comboCards.place(x = borders*2, y = h//4 + borders, anchor='sw')
@@ -376,8 +379,6 @@ def chosenCard(useless):
                 DD, MM, YYYY = datumTransakcie[:2], datumTransakcie[2:4], datumTransakcie[4:]
                 datumTransakcie = f'{DD}/{MM}/{YYYY}'
                 sumaTransakcie = lastPayment[3+i] + ' €'
-                #prijemcaTransakcie = 'Janko Mrtvicka'  ## cCTransCardInfo[4+i]  ## meno prijemcu [klienti.txt] by bolo super
-
                 idUctuPrijemcu = lastPayment[4+i]
                 loadUctyKlienti(idUctuPrijemcu)
                 spaces = (6 - len(sumaTransakcie)) * ' '
@@ -385,8 +386,6 @@ def chosenCard(useless):
                 listboxTransactions.insert('end', item)
         else:
             listboxTransactions.insert('end', 'Neexistujú žiadne transakcie')
-        print('posledne platby:  ' + ';'.join(lastPayment)) 
-
 
 def loadUctyKlienti(idUctu):
     global ucetPrijemcu, prijemcaTransakcie
@@ -505,13 +504,12 @@ def fileInfo(currentClient, currentIN):
         kartyLockSubor.close()
         kartySubor.close()
         os.remove("KARTY_LOCK.txt")
-    print('karty k dispozicii: ' + str(cCCardQuantity), cCCardInfo)
+    #print('karty k dispozicii: ' + str(cCCardQuantity), cCCardInfo)
 
     cardsList = ['--- vyberte kartu ---']
     meta = cCCardInfo[3::11] #od 3. itemu az po koniec, ale iba kazdych 9 itemov
     for i in range(len(meta)):
         cardsList.append(meta[i])
-    print(cardsList)
 
 def handleReturn(event):
     print("return: event.widget is",event.widget)
@@ -592,7 +590,7 @@ def createCard():
     else:
         cardLimit = limitEntry.get()
         if cardLimit.lstrip('+-').isdigit():
-            if float(cardLimit) >= 0:
+            if float(cardLimit) > 0:
                 if visaMastercard.get() != 0 and debetKredit.get() != 0:
                     if visaMastercard.get() == 1:
                         visaMasterCardBinary = 'V'
@@ -624,13 +622,14 @@ def createCard():
                     kartySubor.close()
                     os.remove("KARTY_LOCK.txt")
                     comboCardsCurrent = len(cardsList)
-                    print('create: ' + str(comboCardsCurrent))
                     application()
                     chosenCard('useless')
                     limitMessageBox = messagebox.showinfo('Hotovo', 'Karta bola úspešne vytvorená')
 
                 else:
                     messagebox.showinfo('Druh', 'Najprv zvoľte typ a vydavateľa karty')    
+            else:
+                limitMessageBox = messagebox.showinfo('Limit', 'Limit prečerpania musí byť kladné číslo')
         else:
             limitMessageBox = messagebox.showinfo('Limit', 'Limit prečerpania musí byť kladné číslo')
 
@@ -639,28 +638,34 @@ def createCa(useless):
     createCard()
 
 def removeCard():
-    global currentCardCompleteInfo, comboCardsCurrent, c
+    global currentCardCompleteInfo, comboCardsCurrent, c, dlzna_suma
+    #loading = c.create_text(0,0,text='')
     if os.path.exists("KARTY_LOCK.txt"):
         print('there is a lock file')
+        #loading = c.create_text(w//2, h//2, text='L o a d i n g . . .', font='Arial 30')
         c.after(afterTime,removeCard)
     else:
-        newCardCompleteInfo = '\n' + currentCardCompleteInfo
-        kartyLockSubor = open("KARTY_LOCK.txt","w+")   
-        kartySubor = open("KARTY.txt","r+")
-        wholeFile = kartySubor.read().replace(newCardCompleteInfo,'')
-        numberOfCards = wholeFile.find('\n')
-        numberOfCards = wholeFile[:numberOfCards]
-        kartySubor.close()
-        os.remove("KARTY.txt")
-        wholeFile = f'{str(int(numberOfCards) - 1)}{wholeFile[len(numberOfCards):]}'
-        kartySubor = open("KARTY.txt","w+")
-        kartySubor.write(wholeFile)
-        kartyLockSubor.close()
-        kartySubor.close()
-        os.remove("KARTY_LOCK.txt")
-        comboCardsCurrent = 0
-        application()
-        limitMessageBox = messagebox.showinfo('Hotovo', 'Karta bola úspešne zmazaná')
+        #c.delete(loading)
+        if dlzna_suma != '0':
+            limitMessageBox = messagebox.showinfo('Chyba', f'Karta má dlžnú sumu!'+'\n'+f'Dlžná suma: {dlzna_suma}', icon='warning')
+        else:
+            newCardCompleteInfo = '\n' + currentCardCompleteInfo
+            kartyLockSubor = open("KARTY_LOCK.txt","w+")   
+            kartySubor = open("KARTY.txt","r+")
+            wholeFile = kartySubor.read().replace(newCardCompleteInfo,'')
+            numberOfCards = wholeFile.find('\n')
+            numberOfCards = wholeFile[:numberOfCards]
+            kartySubor.close()
+            os.remove("KARTY.txt")
+            wholeFile = f'{str(int(numberOfCards) - 1)}{wholeFile[len(numberOfCards):]}'
+            kartySubor = open("KARTY.txt","w+")
+            kartySubor.write(wholeFile)
+            kartyLockSubor.close()
+            kartySubor.close()
+            os.remove("KARTY_LOCK.txt")
+            comboCardsCurrent = 0
+            application()
+            limitMessageBox = messagebox.showinfo('Hotovo', 'Karta bola úspešne zmazaná')
 
 def blockCard():
     global blockCardButton, blokovana, currentCardCompleteInfo, c
@@ -696,7 +701,7 @@ def blockCard():
         limitMessageBox = messagebox.showinfo('Hotovo', f'Karta bola úspešne {messageBoxWord}')
 
 def loadTransakcie():
-    global id_karty, cCTransCardInfo, lastPayment, c
+    global id_karty, cCTransCardInfo, lastPayment, c, paymentQuantity
     if os.path.exists("TRANSAKCIE_KARTY_LOCK.txt"):
         print('there is a lock file')
         c.after(afterTime,loadTransakcie)
@@ -714,26 +719,9 @@ def loadTransakcie():
         transKartyLockSubor.close()
         transKartySubor.close()
         os.remove("TRANSAKCIE_KARTY_LOCK.txt")
-        #print(cCTransCardInfo)
-        if len(cCTransCardInfo) >= 5*3:
-            lastPayment = cCTransCardInfo[-15:-1]
-            #print(lastPayment)
-            #datumTransakcie = cCTransCardInfo[1+(-3*5)]
-        elif len(cCTransCardInfo) >= 5*2:
-            lastPayment = cCTransCardInfo[-10:-1]
-        elif len(cCTransCardInfo) >= 5:
-            lastPayment = cCTransCardInfo[-5:-1]
-        else:
-            lastPayment = ''
-        #print(lastPayment)
+        print(paymentQuantity)
+        lastPayment = cCTransCardInfo[5*(int(paymentQuantity)-3)::]
+
 
 loginScreen()
-
-
-
-
-
-
-
-
 
