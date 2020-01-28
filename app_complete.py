@@ -587,8 +587,8 @@ def createCard():
         print('there is a lock file')
         c.after(afterTime,createCard)
     else:
-        cardLimit = limitEntry.get()
-        if cardLimit.lstrip('+-').isdigit():
+        cardLimit = limitEntry.get().lstrip('+-0')
+        if cardLimit.lstrip('+-0').isdigit():
             if float(cardLimit) > 0:
                 if visaMastercard.get() != 0 and debetKredit.get() != 0:
                     if visaMastercard.get() == 1:
@@ -623,7 +623,7 @@ def createCard():
                     verzieKarietSubor.close()
                     os.remove("KARTY_VERZIA.txt")
                     verzieKarietSubor = open("KARTY_VERZIA.txt","w+")
-                    verzieKarietSubor.write(versionFile)
+                    verzieKarietSubor.write(str(versionFile))
                     verzieKarietSubor.close()
                     kartyLockSubor.close()
                     os.remove("KARTY_LOCK.txt")
@@ -672,7 +672,7 @@ def removeCard():
             verzieKarietSubor.close()
             os.remove("KARTY_VERZIA.txt")
             verzieKarietSubor = open("KARTY_VERZIA.txt","w+")
-            verzieKarietSubor.write(versionFile)
+            verzieKarietSubor.write(str(versionFile))
             verzieKarietSubor.close()
             kartyLockSubor.close()
             os.remove("KARTY_LOCK.txt")
@@ -712,7 +712,7 @@ def blockCard():
         verzieKarietSubor.close()
         os.remove("KARTY_VERZIA.txt")
         verzieKarietSubor = open("KARTY_VERZIA.txt","w+")
-        verzieKarietSubor.write(versionFile)
+        verzieKarietSubor.write(str(versionFile))
         verzieKarietSubor.close()
         kartyLockSubor.close()
         os.remove("KARTY_LOCK.txt")
@@ -744,4 +744,5 @@ def loadTransakcie():
 
 
 loginScreen()
+
 
