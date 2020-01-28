@@ -1,6 +1,5 @@
 '''
-need 2 get done: frontend transakcie + nacitanie mena prijemcu a uctu prijemcu
-                 ak existuje lockfile transakcii kariet, a potom sa vymaze, tak load transakcie sa dokonci, ale nevypisu sa, lebo hodi, ze nie je defined
+need 2 get done: ak existuje lockfile transakcii kariet, a potom sa vymaze, tak load transakcie sa dokonci, ale nevypisu sa, lebo hodi, ze nie je defined
                  uz len naloadovat klienta do transakcii
 '''
 
@@ -618,8 +617,15 @@ def createCard():
                     os.remove("KARTY.txt")
                     kartySubor = open("KARTY.txt","w+")
                     kartySubor.write(wholeFile)
-                    kartyLockSubor.close()
                     kartySubor.close()
+                    verzieKarietSubor = open("KARTY_VERZIA.txt","r+")
+                    versionFile = int(verzieKarietSubor.readline().strip())+1
+                    verzieKarietSubor.close()
+                    os.remove("KARTY_VERZIA.txt")
+                    verzieKarietSubor = open("KARTY_VERZIA.txt","w+")
+                    verzieKarietSubor.write(versionFile)
+                    verzieKarietSubor.close()
+                    kartyLockSubor.close()
                     os.remove("KARTY_LOCK.txt")
                     comboCardsCurrent = len(cardsList)
                     application()
@@ -660,8 +666,15 @@ def removeCard():
             wholeFile = f'{str(int(numberOfCards) - 1)}{wholeFile[len(numberOfCards):]}'
             kartySubor = open("KARTY.txt","w+")
             kartySubor.write(wholeFile)
-            kartyLockSubor.close()
             kartySubor.close()
+            verzieKarietSubor = open("KARTY_VERZIA.txt","r+")
+            versionFile = int(verzieKarietSubor.readline().strip())+1
+            verzieKarietSubor.close()
+            os.remove("KARTY_VERZIA.txt")
+            verzieKarietSubor = open("KARTY_VERZIA.txt","w+")
+            verzieKarietSubor.write(versionFile)
+            verzieKarietSubor.close()
+            kartyLockSubor.close()
             os.remove("KARTY_LOCK.txt")
             comboCardsCurrent = 0
             application()
@@ -693,8 +706,15 @@ def blockCard():
         os.remove("KARTY.txt")
         kartySubor = open("KARTY.txt","w+")
         kartySubor.write(wholeFile)
-        kartyLockSubor.close()
         kartySubor.close()
+        verzieKarietSubor = open("KARTY_VERZIA.txt","r+")
+        versionFile = int(verzieKarietSubor.readline().strip())+1
+        verzieKarietSubor.close()
+        os.remove("KARTY_VERZIA.txt")
+        verzieKarietSubor = open("KARTY_VERZIA.txt","w+")
+        verzieKarietSubor.write(versionFile)
+        verzieKarietSubor.close()
+        kartyLockSubor.close()
         os.remove("KARTY_LOCK.txt")
         fileInfo(currentClient, currentIN)
         chosenCard('useless')
