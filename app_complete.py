@@ -86,6 +86,8 @@ def loginAuthentication():
     global c, incorrectNameOrPassword
     loginName = entryName.get()
     loginPassword = entryPassword.get()
+    loadEmployees()
+    #loadClients()
     
     if loginName in users and users[loginName] == loginPassword: ##treba zmenit na to, ze ak je spravne heslo a meno
         c.destroy()
@@ -101,6 +103,7 @@ def loginAut(useless):
 
 def loadEmployees():
     global newUser, c
+    users.clear()
     if os.path.exists("ZAMESTNANCI_LOCK.txt"):
         print('there is a lock file')
         c.after(afterTime,loadEmployees)
@@ -137,12 +140,12 @@ def loadClients():
         
 
 def loginScreen():
-    global entryName, entryPassword
+    global entryName, entryPassword, users
     essentialLook()
     vertLine = c.create_line(w//2, borders*5, w//2, h, width = widthLines, fill = colorElement)
 
-    loadEmployees()
-    loadClients()
+    #loadEmployees()
+    #loadClients()
     
     c.create_text(w - borders, borders*2 , anchor = 'se', text = verzia, fill=colorElement,font = fontMain + (fontSizeSmall,) + (fontItalic,))
 
@@ -357,8 +360,6 @@ def chosenCard(useless):
         elif blokovana == '1':
             line7 = c.create_text(borders*2, h//3 + borders*11, text='Stav: blokovaná', font = fontMain + (fontSizeSmall,) + (fontStyleNone,), fill=colorElement, anchor = 'w')
             blockCardButton.config(text = 'odblokovať kartu')
-### zmena from here
-        
         
         listboxTransactions = tk.Listbox(borderwidth = 3, height = 4,selectbackground='white',highlightthickness = 0, selectforeground = 'black',activestyle = 'none', width=50,font = fontWidget + (fontSizeSmall,) + (fontStyleNone,))
         listboxTransactions.pack()
@@ -521,6 +522,7 @@ def remove_accents(inputString):
 def searchClient():
     global foundClients
     d = 0
+    loadClients()
     foundClients = []
     listboxClients.delete(0, 'end')
     searchName = searchEngineEntry.get().lower()
@@ -721,7 +723,7 @@ def blockCard():
         limitMessageBox = messagebox.showinfo('Hotovo', f'Karta bola úspešne {messageBoxWord}')
 
 def loadTransakcie():
-    global id_karty, cCTransCardInfo, lastPayment, c, paymentQuantity
+    global id_karty, cCTransCardInfo, lastPayment, c, paymentQuantity, pause, version
     if os.path.exists("TRANSAKCIE_KARTY_LOCK.txt"):
         print('there is a lock file')
         c.after(afterTime,loadTransakcie)
@@ -741,6 +743,28 @@ def loadTransakcie():
         os.remove("TRANSAKCIE_KARTY_LOCK.txt")
         print(paymentQuantity)
         lastPayment = cCTransCardInfo[5*(int(paymentQuantity)-3)::]
+##    version = ''
+##    pause = False
+##    timer()
+##
+##def timer():
+##    global pause, version
+##    if pause == True:
+##        print('pauza')
+##    else:
+##        file = open('TRANSAKCIE_KARTY_VERZIA.txt', 'r+')
+##        if version == '':
+##            version = file.readline().strip()
+##            timer()
+##        else:
+##            version2 = file.readline().strip()
+##            if version != version:
+##                print('verzia!!')
+##                chosenCard('useless')
+##            else:
+##                None
+##                #print('after')
+##                c.after(2000, timer())
 
 
 loginScreen()
