@@ -218,7 +218,7 @@ def chooseClientScreen():
 
 
 def application():
-    global comboCards,searchEngineEntry,c,blockCardButton,limitEntry, comboCardsCurrent, visaMastercard, debetKredit
+    global pauseLoading, comboCards, searchEngineEntry, c, blockCardButton, limitEntry, comboCardsCurrent, visaMastercard, debetKredit
     visaMastercard.set(0)
     debetKredit.set(0)
     c.destroy()
@@ -268,7 +268,8 @@ def application():
     createCardButton = tk.Button(bg=colorElement, width = 12, command = createCard, activebackground = colorElement,foreground = backgroundColor,text = 'vytvoriť kartu',cursor='hand2',font = fontWidget + (fontSizeMedium,) + (fontBold,))
     createCardButton.pack()
     createCardButton.place(x = w-borders*2, y = h-borders*2, anchor = 'se')
-    
+
+    pauseLoading = False
     fileInfo(currentClient, currentIN)
     ## comboBox pre karty klienta
     comboCards = ttk.Combobox(font = fontWidget + (fontSizeSmall,) + (fontStyleNone,), values = cardsList, width = 45, state='readonly', justify = 'center')
@@ -286,11 +287,10 @@ def application():
     changeClientButton.place(x = w-borders*14, y = (borders*5+widthLines/2)/2, anchor='e')
 
 def chosenCard(useless): 
-    global pauseLoading, lastPayment, ucetPrijemcu, headline9, xscrollbar, listboxTransactions, currentClient, currentIN, blockCardButton, deleteCardButton, id_karty, cCTransCardInfo, currentCardCompleteInfo, limit_karty, currentCard,cvvKod,typKreditDebet, poradie, vydavatel, datum_platnosti, id_uctu, dlzna_suma, blokovana, datum_vytvorenia, line1, line2, line3, line4, line5, line6, line7, line8, line9, line10, line11
+    global pauseLoading, version, lastPayment, ucetPrijemcu, headline9, xscrollbar, listboxTransactions, currentClient, currentIN, blockCardButton, deleteCardButton, id_karty, cCTransCardInfo, currentCardCompleteInfo, limit_karty, currentCard,cvvKod,typKreditDebet, poradie, vydavatel, datum_platnosti, id_uctu, dlzna_suma, blokovana, datum_vytvorenia, line1, line2, line3, line4, line5, line6, line7, line8, line9, line10, line11
     c.delete(line1, line2, line3, line4, line5, line6, line7, line8, line9, line10, line11)
     currentCard = cardsList[comboCards.current()]
     poradie = comboCards.current()-1
-    pauseLoading = True
     
     if poradie == -1:
         try:
@@ -372,8 +372,9 @@ def chosenCard(useless):
         xscrollbar.place(x = w/4+4,y = h - borders*2+5, height=30, width=606,anchor='c')
         listboxTransactions.config(xscrollcommand=xscrollbar.set)
         xscrollbar.config(command=listboxTransactions.xview)
-        
+
         loadTransakcie()
+        
         
         if lastPayment != '':
             for i in range(0,len(lastPayment),5):
@@ -389,6 +390,12 @@ def chosenCard(useless):
                 listboxTransactions.insert('end', item)
         else:
             listboxTransactions.insert('end', 'Neexistujú žiadne transakcie')
+
+        if pauseLoading == False:
+            version = ''
+            timer()
+            pauseLoading = True
+            
 
 def loadUctyKlienti(idUctu):
     global ucetPrijemcu, prijemcaTransakcie
@@ -746,29 +753,23 @@ def loadTransakcie():
         os.remove("TRANSAKCIE_KARTY_LOCK.txt")
         print(paymentQuantity)
         lastPayment = cCTransCardInfo[5*(int(paymentQuantity)-3)::]
-    version = ''
-    pauseLoading = False
-    timer()
 
 def timer():
     global pauseLoading, version, checkInterval
-    if pauseLoading == True:
-        print('pauza')
+    file = open('TRANSAKCIE_KARTY_VERZIA.txt', 'r+')
+    if version == '':
+        version = file.readline().strip()
+        print('first')
+        c.after(checkInterval, timer)
     else:
-        file = open('TRANSAKCIE_KARTY_VERZIA.txt', 'r+')
-        if version == '':
-            version = file.readline().strip()
-            print('first')
-            c.after(checkInterval, timer)
+        version2 = file.readline().strip()
+        if version2 != version:
+            print('verzia!!')
+            pauseLoading = False
+            chosenCard('useless')
         else:
-            version2 = file.readline().strip()
-            if version2 != version:
-                print('verzia!!')
-                chosenCard('useless')
-            else:
-                #None
-                print('after')
-                c.after(checkInterval, timer)
+            print('after')
+            c.after(checkInterval, timer)
 
 
 loginScreen()
