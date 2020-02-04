@@ -1,17 +1,7 @@
+'''uplny sen by bol zistit ako sa da checknut ci uz raz
+nebezi definicia/ proste nejako zamedzit multiple run..
+lebo inak sa nam rozbieha load transakcie sice len vtedy, ked je lock
 '''
-need 2 get done: ak existuje lockfile transakcii kariet, a potom sa vymaze, tak load transakcie sa dokonci, ale nevypisu sa, lebo hodi, ze nie je defined
-                 uz len naloadovat klienta do transakcii
-'''
-
-
-##########zide sa na neskor
-##
-##print(dict(comboUcet))
-##
-##for card in range(cardsList):
-##    rect = c.create_rectangle(borders*2, cardsY, w//2-borders, cardsY + cardsHeight, fill = colorElement, activefill='gray', tags='rectClick')
-##    cardsY += cardsHeight + borders
-##
 ##c.tag_bind('rectClick','<Button-1>', cardsClick)
 
 import tkinter as tk, os, unicodedata
