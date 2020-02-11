@@ -158,7 +158,7 @@ def skontroluj2():
       zhoda = False
       if os.path.exists('KLIENTI_LOCK.txt'):
             print('there is a lock file')
-            c.after(2000,skontroluj2)
+            canvas.after(2000,skontroluj2)
       else:
             subor_lock = open('KLIENTI_LOCK.txt','w+')
             subor = open('KLIENTI.txt','r')
@@ -297,7 +297,7 @@ def warning(vstup):
       wrongInsertMessageBox = messagebox.showinfo('Chyba', vstup)
       
 def vypis_info():
-      global ip,meno,priezvisko,detail,rodnecislo,pokus,buttonvklad,buttonvyber, existujeklient, ucty,zmazatlistbox, listboxUcty, listboxObraty, buttondetailuctu,buttonosobny,buttonobchodny,buttonodobratucet
+      global ip,rodne_vymaz, meno,priezvisko,detail,rodnecislo,pokus,buttonvklad,buttonvyber, existujeklient, ucty,zmazatlistbox, listboxUcty, listboxObraty, buttondetailuctu,buttonosobny,buttonobchodny,buttonodobratucet
 
       detail = True
       rodne_cislo = entryRodne.get()
@@ -331,12 +331,14 @@ def vypis_info():
 
                   if int(pozicia) > 0:
                         #print(riadok)
-                        rozdelenie = riadok.split(';')
+                        rozdelenie = riadok.strip().split(';')
 
                         ip = rozdelenie[0]
                         meno = rozdelenie[1]
                         priezvisko = rozdelenie[2]
                         rodnecislo = rozdelenie[3]
+                        rodne_vymaz = rodnecislo
+                        print(rodne_vymaz)
 
                         #print(meno)
             subor.close()
@@ -432,7 +434,7 @@ def pridaj_obchodny():
 
       if os.path.exists('UCTY_LOCK.txt'):
             print('there is a lock file')
-            c.after(2000,pridaj_obchodny)
+            canvas.after(2000,pridaj_obchodny)
       else:
             subor_lock = open('UCTY_LOCK.txt','w+')
             subor = open('UCTY.txt','r')
@@ -484,7 +486,7 @@ def pridaj_osobny():
 
       if os.path.exists('UCTY_LOCK.txt'):
             print('there is a lock file')
-            c.after(2000,pridaj_osobny)
+            canvas.after(2000,pridaj_osobny)
       else:
             subor_lock = open('UCTY_LOCK.txt','w+')
             subor = open('UCTY.txt','r')
@@ -532,7 +534,7 @@ def odstranit_ucet():
       if cislo_uctu != '':
             if os.path.exists('UCTY_LOCK.txt'):
                   print('there is a lock file')
-                  c.after(2000,odstranit_ucet)
+                  canvas.after(2000,odstranit_ucet)
             else:
                   subor_lock = open('UCTY_LOCK.txt','w+')
                   subor = open('UCTY.txt','r')
@@ -692,7 +694,7 @@ def vklad():
             if suma.lstrip('-+0').isdigit():
                   if os.path.exists("UCTY_LOCK.txt") or os.path.exists('TRANSAKCIE_UCTY_LOCK.txt'):
                         print('there is a lock file')
-                        c.after(2000, vklad)
+                        canvas.after(2000, vklad)
                   else:
                         subor_lock = open("UCTY_LOCK.txt", 'w+')
                         subor2_lock = open("TRANSAKCIE_UCTY_LOCK.txt", 'w+')
@@ -773,7 +775,7 @@ def vyber():
             if suma != '':
                   if os.path.exists("UCTY_LOCK.txt") or os.path.exists('TRANSAKCIE_UCTY_LOCK.txt'):
                         print('there is a lock file')
-                        c.after(2000, vyber)
+                        canvas.after(2000, vyber)
                   else:
                         subor_lock = open("UCTY_LOCK.txt", 'w+')
                         subor2_lock = open("TRANSAKCIE_UCTY_LOCK.txt", 'w+')
@@ -1013,73 +1015,109 @@ def uspesneodstranenie():
       if messageBox == 'ok':
           None
 
-      
+
 def vymazat_klienta():
-      global ip, vymazriadok
-      if(os.path.exists("KLIENTI_LOCK.txt")):
-            canvas.after(2000,vymazat_klienta)
+      global ip, vymazriadok, rodne_vymaz
+      vymaz_riadok = ''
+      if os.path.exists('KLIENTI_LOCK.txt'):
+            canvas.after(2000, delete_client)
       else:
-            uctyLockSubor = open("KLIENTI_LOCK.txt", "w+")
-            
-            subor = open('KLIENTI.txt','r')
-            
-            for i in range (int(subor.readline())):
-                  riadok = subor.readline()
-                  rozdelenie = riadok.split(';')
+            lock = open('KLIENTI_LOCK.txt', 'w+')
+            subor = open('KLIENTI.txt','r+')
+            linesQuantity = subor.readline().strip()
+            for i in range(int(linesQuantity)):
+                  riadok = subor.readline().strip().split(';')
+                  if riadok[3] == str(rodne_vymaz):
+                        vymaz_riadok = ';'.join(riadok)
+                        vymaz_riadok = '\n' + vymaz_riadok
 
-                  if rozdelenie[0] == ip:
-                        riadok_cislo = i+1
-                        print(i+1)
-                        print(rozdelenie[0])
-                        print(riadok)
-                        print(riadok_cislo)
-                        
-            subor.close()
-       
-            f = open('KLIENTI.txt')
-            lines = f.readlines()
-            vymazriadok = str('\n' + lines[riadok_cislo])
-            lines = f.read()
-            lines.replace(vymazriadok, '')
-#            lines.remove('\n' + lines[riadok_cislo])
-            #lines[riadok_cislo-1] = lines[riadok_cislo-1].strip()
-            
-            f = open('KLIENTI.txt',"w")
-            f.writelines(lines)
-            f.close()
+            if vymaz_riadok != '':
+                  subor.close()
+                  subor = open('KLIENTI.txt','r+')
+                  cely = subor.read().replace(vymaz_riadok, '')
+                  subor.close()
+                  os.remove("KLIENTI.txt")
+                  linesQuantity = str(int(linesQuantity) -1)
+                  cely = linesQuantity + cely[len(linesQuantity):]
+                  subor = open('KLIENTI.txt','w+')
+                  subor.write(cely)
+                  subor.close()
+                  lock.close()
+                  os.remove('KLIENTI_LOCK.txt')
 
-
-##            num_lines = sum(1 for line in open('KLIENTI.txt'))                           ######################## error vymaze cely subor KLIENTI
-##            pocetriadkov = num_lines - (1)
-##            pocetriadkov_str = str(pocetriadkov)
-##            print(pocetriadkov_str)
-
-            subor = open('KLIENTI.txt', 'r+')
-            riadok = subor.readline().strip()
-            print(riadok)
-            riadok = int(riadok) + 1
-            pocetriadkov_str = str(riadok)
-
-            f = open('KLIENTI.txt')
-            lines = f.readlines()
-            print(lines)
-            lines[0] = pocetriadkov_str
+                  menu()
+            else:
+                  warning('Vyberte klienta, ktorého chcete vymazať')
+                
             
 
-            f = open('KLIENTI.txt',"w")
-            f.writelines(lines)
-            f.close()
 
-            verzia = open('KLIENTI_VERZIA.txt', 'r+')
-            verzia_pocet = str(int(verzia.readline().strip())+1)
-            verzia = open('KLIENTI_VERZIA.txt', 'w')
-            verzia.writelines(verzia_pocet)
-            verzia.close()
-            
-            uctyLockSubor.close()
-            os.remove("KLIENTI_LOCK.txt")
-
-            menu()
+##def vymazat_klienta():
+##      global ip, vymazriadok
+##      if(os.path.exists("KLIENTI_LOCK.txt")):
+##            canvas.after(2000,vymazat_klienta)
+##      else:
+##            uctyLockSubor = open("KLIENTI_LOCK.txt", "w+")
+##            
+##            subor = open('KLIENTI.txt','r')
+##            
+##            for i in range (int(subor.readline())):
+##                  riadok = subor.readline()
+##                  rozdelenie = riadok.split(';')
+##
+##                  if rozdelenie[0] == ip:
+##                        riadok_cislo = i+1
+##                        print(i+1)
+##                        print(rozdelenie[0])
+##                        print(riadok)
+##                        print(riadok_cislo)
+##                        
+##            subor.close()
+##       
+##            f = open('KLIENTI.txt')
+##            lines = f.readlines()
+##            vymazriadok = str('\n' + lines[riadok_cislo])
+##            lines = f.read()
+##            lines.replace(vymazriadok, '')
+###            lines.remove('\n' + lines[riadok_cislo])
+##            #lines[riadok_cislo-1] = lines[riadok_cislo-1].strip()
+##            
+##            f = open('KLIENTI.txt',"w")
+##            f.writelines(lines)
+##            f.close()
+##
+##
+####            num_lines = sum(1 for line in open('KLIENTI.txt'))                           ######################## error vymaze cely subor KLIENTI
+####            pocetriadkov = num_lines - (1)
+####            pocetriadkov_str = str(pocetriadkov)
+####            print(pocetriadkov_str)
+##
+##            subor = open('KLIENTI.txt', 'r+')
+##            riadok = subor.readline().strip()
+##            print(riadok)
+##            riadok = int(riadok) + 1
+##            pocetriadkov_str = str(riadok)
+##
+##            f = open('KLIENTI.txt')
+##            lines = f.readlines()
+##            print(lines)
+##            lines[0] = pocetriadkov_str
+##            
+##
+##            f = open('KLIENTI.txt',"w")
+##            f.writelines(lines)
+##            f.close()
+##
+##            verzia = open('KLIENTI_VERZIA.txt', 'r+')
+##            verzia_pocet = str(int(verzia.readline().strip())+1)
+##            verzia = open('KLIENTI_VERZIA.txt', 'w')
+##            verzia.writelines(verzia_pocet)
+##            verzia.close()
+##            
+##            uctyLockSubor.close()
+##            os.remove("KLIENTI_LOCK.txt")
+##
+##            menu()
 
 
 menu()
