@@ -390,7 +390,7 @@ def vypis_info():
                   #print(riadok)
                   rozdelenie = riadok.split(';')
                   ip_uctu = rozdelenie[0]
-                  ip_klienta = rozdelenie[1]
+                  ip_klienta = rozdelenie[1]                ###
                   cislo_uctu = rozdelenie[2]
                   pm = rozdelenie[3]
                   stav = rozdelenie[4]
@@ -712,11 +712,13 @@ def vklad():
 
                         f = open('UCTY.txt')
                         lines = f.readlines()
-                        lines[riadok_cislo] = ip_uctu+";"+ip_klienta+";"+cislo_uctu+";"+typ+";"+str(sucet)
-
+                        lines[riadok_cislo] = ip_uctu+";"+ip_klienta+";"+cislo_uctu+";"+typ+";"+str(sucet) + '\n' 
+                        print(lines, lines[riadok_cislo])
+                        
                         f = open('UCTY.txt',"w+")
                         f.writelines(lines)
                         f.close()
+                        
                         
                         subor1 = open('TRANSAKCIE_UCTY.txt','r')
                         riadky = subor1.readlines()
@@ -792,7 +794,7 @@ def vyber():
 
                         f = open('UCTY.txt')
                         lines = f.readlines()
-                        lines[riadok_cislo] = ip_uctu+";"+ip_klienta+";"+cislo_uctu+";"+typ+";"+str(sucet)
+                        lines[riadok_cislo] = ip_uctu+";"+ip_klienta+";"+cislo_uctu+";"+typ+";"+str(sucet) + '\n'
 
                         f = open('UCTY.txt',"w")
                         f.writelines(lines)
@@ -1013,7 +1015,7 @@ def uspesneodstranenie():
 
       
 def vymazat_klienta():
-      global ip
+      global ip, vymazriadok
       if(os.path.exists("KLIENTI_LOCK.txt")):
             canvas.after(2000,vymazat_klienta)
       else:
@@ -1036,22 +1038,33 @@ def vymazat_klienta():
        
             f = open('KLIENTI.txt')
             lines = f.readlines()
-            lines.remove(lines[riadok_cislo])
-            lines[riadok_cislo-1] = lines[riadok_cislo-1].strip()
+            vymazriadok = str('\n' + lines[riadok_cislo])
+            lines = f.read()
+            lines.replace(vymazriadok, '')
+#            lines.remove('\n' + lines[riadok_cislo])
+            #lines[riadok_cislo-1] = lines[riadok_cislo-1].strip()
             
             f = open('KLIENTI.txt',"w")
             f.writelines(lines)
             f.close()
 
 
-            num_lines = sum(1 for line in open('KLIENTI.txt'))
-            pocetriadkov = num_lines - (1)
-            pocetriadkov_str = str(pocetriadkov)
-            print(pocetriadkov_str)
+##            num_lines = sum(1 for line in open('KLIENTI.txt'))                           ######################## error vymaze cely subor KLIENTI
+##            pocetriadkov = num_lines - (1)
+##            pocetriadkov_str = str(pocetriadkov)
+##            print(pocetriadkov_str)
+
+            subor = open('KLIENTI.txt', 'r+')
+            riadok = subor.readline().strip()
+            print(riadok)
+            riadok = int(riadok) + 1
+            pocetriadkov_str = str(riadok)
 
             f = open('KLIENTI.txt')
             lines = f.readlines()
-            lines[0] = pocetriadkov_str+"\n"
+            print(lines)
+            lines[0] = pocetriadkov_str
+            
 
             f = open('KLIENTI.txt',"w")
             f.writelines(lines)
